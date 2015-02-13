@@ -1,3 +1,3 @@
 #! /bin/sh
 
-python3 tcpser.py
+python3 ardeidae/tcpser.py

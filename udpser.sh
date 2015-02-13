@@ -1,3 +1,3 @@
 #! /bin/sh
 
-python3 udpser.py
+python3 ardeidae/udpser.py

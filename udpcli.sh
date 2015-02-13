@@ -1,3 +1,3 @@
 #! /bin/sh
 
-python3 udpcli.py
+python3 ardeidae/udpcli.py

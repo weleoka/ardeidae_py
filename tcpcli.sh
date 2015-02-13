@@ -1,3 +1,3 @@
 #! /bin/sh
 
-python3 tcpcli.py
+python3 ardeidae/tcpcli.py

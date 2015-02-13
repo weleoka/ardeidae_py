@@ -92,8 +92,8 @@ if __name__ == '__main__':
     print ("Server host name: ", socket.gethostname(), " on ", socket.gethostbyname(socket.gethostname()), " port: ", thisPort)
     print ("fully qualified domain name: ", socket.getfqdn())
     print ("details: ", socket.gethostbyaddr(socket.gethostbyname(socket.gethostname())))
-    servSocket.bind((socket.gethostname(), thisPort))
-    # servSocket.bind(('', thisPort))                                      #bind socket to port 8120, accept connections from all hosts
+    # servSocket.bind((socket.gethostname(), thisPort))
+    servSocket.bind(('192.168.1.36', thisPort))                   #bind socket to port 8120, accept connections from all hosts
     servSocket.listen(2)                                                    #listen on socket, number of queued requests. MAX 5.
 
     while True:
