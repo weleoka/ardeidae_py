@@ -14,5 +14,5 @@ print ("The UDP server is ready to receive")
 
 while 1:
     message, clientAddress = serverSocket.recvfrom(2048)
-    modifiedMessage = message.upper() + 'YAAAAAAAAAAAAA'
+    modifiedMessage = message.upper() + '-YAAAAAA!!'
     serverSocket.sendto(modifiedMessage, clientAddress)

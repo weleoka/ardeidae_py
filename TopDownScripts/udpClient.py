@@ -1,13 +1,13 @@
 from socket import *
 
-serverName = 'hostname'
+serverName = 'localhost'
 serverPort = 12000
 
 """
 AF_INET= underlying network is using IPv4.
 SOCK_DGRAM = UDP socket (rather than a TCP socket).
 """
-clientSocket = socket(socket.AF_INET, socket.SOCK_DGRAM)
+clientSocket = socket(AF_INET, SOCK_DGRAM)
 
 message = raw_input('Input lowercase sentence:')
 

@@ -4,15 +4,6 @@ import re
 import os
 import glob
 
-"""
-have the "ls," "chdir," "dl," and "quit" commands programmed:
-
-
-ls: requests and displays current working directory and all it's contents from the server
-chdir: changes current working directory of the server (args: the directory to change to)
-dl: downloads file (args: the file name to download)
-quit: disconnects from server and closes socket
-"""
 
 def recv_fixed_size(socket, MSGLEN):
     '''
@@ -92,10 +83,18 @@ def handshake(socket, msgToSend):
 
 
 if __name__ == '__main__':
-    print("Started TCP Server... waiting for clients.")
+
     servSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)          #create socket
-    servSocket.bind(('', 3031))                                             #bind socket to port 3031, accept connections from all hosts
-    servSocket.listen(2)                                                    #listen on socket
+
+    thisPort = 8120
+
+    print("Started TCP Server... waiting for clients.")
+    print ("Server host name: ", socket.gethostname(), " on ", socket.gethostbyname(socket.gethostname()), " port: ", thisPort)
+    print ("fully qualified domain name: ", socket.getfqdn())
+    print ("details: ", socket.gethostbyaddr(socket.gethostbyname(socket.gethostname())))
+    servSocket.bind((socket.gethostname(), thisPort))
+    # servSocket.bind(('', thisPort))                                      #bind socket to port 8120, accept connections from all hosts
+    servSocket.listen(2)                                                    #listen on socket, number of queued requests. MAX 5.
 
     while True:
         (communicationSocket, addr) = servSocket.accept()                   #accept connection
@@ -139,11 +138,14 @@ if __name__ == '__main__':
                     #change directory
                     try:
                         s = dataStr.split(" ", 1)
-                        path = s[1]
-                        # os.chdir(path)
-                        # print("Changed current working directory to: ", os.getcwd())
-                        print("Directory changing allowed.")
-                        newDir = "The new current working directory on the server is: " + os.getcwd() + "929Z"
+                        if len(s) >= abs(2):
+                            path = s[1]
+                            # os.chdir(path)
+                            # print("Changed current working directory to: ", os.getcwd())
+                            print("Directory changing not allowed.")
+                            newDir = "The new current working directory on the server is: " + os.getcwd() + "929Z"
+                        else:
+                            newDir = "Not a recognised directory.929Z"
                         communicationSocket.sendall(newDir.encode('utf-8'))
                     except OSError as e:                                       #if invalid path
                         print("Invalid path!")
@@ -174,6 +176,7 @@ if __name__ == '__main__':
                     print("Client has quit the connection.")
                     communicationSocket.close()
                     communicating = False
+
                 else:                                                               #if command is unrecognized
                     print("Unrecognized Command: ", dataStr)
                     response = "Unrecognized Command!" + "929Z"
@@ -181,3 +184,38 @@ if __name__ == '__main__':
 
         else:
             print("The handshake was unsuccessful. Continuing to listen...")        #if connection/handshake was unsuccessful
+
+
+
+"""
+import socketserver
+
+class MyTCPHandler(socketserver.BaseRequestHandler):
+
+    The RequestHandler class for our server.
+
+    It is instantiated once per connection to the server, and must
+    override the handle() method to implement communication to the
+    client.
+
+
+    def handle(self):
+        # self.request is the TCP socket connected to the client
+        self.data = self.request.recv(1024).strip()
+        print "{} wrote:".format(self.client_address[0])
+        print self.data
+        # just send back the same data, but upper-cased
+        self.request.sendall(self.data.upper())
+
+if __name__ == "__main__":
+    # HOST, PORT = "sweet.student.bth.se", 8120
+    # HOST, PORT = "seekers.student.bth.se", 8120
+    HOST, PORT = "localhost", 8120
+
+    # Create the server, binding to specified host and port
+    server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
+
+    # Activate the server; this will keep running until you
+    # interrupt the program with Ctrl-C
+    server.serve_forever()
+"""

@@ -3,6 +3,7 @@ import socket
 import re
 import os
 
+HOST, PORT = "127.0.1.1", 8120
 
 def recv_fixed_size(socket, MSGLEN):
     '''
@@ -107,7 +108,12 @@ def handshake(socket, msgToSend):
 
 if __name__ == '__main__':
     clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)    #create socket
-    clientSocket.connect(("localhost", 3031))                           #connect to localhost, port 3031
+    # clientSocket.connect(("sweet.student.bth.se", 8120))                           #connect to bth, port
+    # clientSocket.connect(("seekers.student.bth.se", 8120))                           #connect to bth, port
+    # clientSocket.connect(("127.0.1.1", 8120))                           #connect to localhost, port
+    print(" ")
+    print ("Trying to connect to: ", HOST, " on port ", PORT)
+    clientSocket.connect((HOST, PORT))
 
     handshakeMsg = b'bthDataComClientKey'
     if handshake(clientSocket, handshakeMsg):                           #if handshaking is successful
