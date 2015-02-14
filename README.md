@@ -5,18 +5,18 @@
 This is for learning purposes whereby simple data packets can be sent and recieved.
 The recommended tool to complement this experiment is Wireshark.
 
+All servers and clients are optimised for python 3.
 
-### TCP versions of server-client run on python 3.
-Execute with shellscript: ./tcpser.sh and ./tcpcli.sh
+## TCP
+### Server
+Execute with shellscript: ./tcpser.sh
+tcpser just echos back the clients command. The tcpSer Advanced accepts arguments.
 Server default listening port: 8120
 
-### UDP versions of server-client run on python 3.
-Right now the server just echo's back the clients message.
-Server default listening port: 8121
+### Client TCP
+Execute client with bashscript ./tcpcli.sh [input texts]
 
-
-
-### Client  TCP:
+### Advanced Client  TCP:
 Look in the client code for HOST, PORT variable and change the values so that they correspond with the server which you are trying to connect to.
 
 
@@ -29,9 +29,16 @@ Input "ls" "chdir" "dl" and "quit" commands at prompt. Any other input returns e
 
 
 
+
+## UDP
+### Server
+Right now the server just echo's back the clients message.
+Execute with shellscript: ./udpser.sh
+Server default listening port: 8121
+
 ### Client  UDP:
 Takes one argument text-string on commandline which is then sent to server.
-
+Execute client with bashscript ./udpcli.sh [input texts]
 
 
 ## Sources and inspiration.
