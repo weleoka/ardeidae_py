@@ -3,7 +3,7 @@
 ## TCP and UDP server-client written in Python.
 
 This is for learning purposes whereby simple data packets can be sent and recieved.
-The recommended tool to compliment this experiment is Wireshark.
+The recommended tool to complement this experiment is Wireshark.
 
 
 ### TCP versions of server-client run on python 3.
@@ -22,10 +22,10 @@ Look in the client code for HOST, PORT variable and change the values so that th
 
 Input "ls" "chdir" "dl" and "quit" commands at prompt. Any other input returns echo.
 
-ls: requests and displays current working directory and all it's contents from the server
-chdir: changes current working directory of the server (args: the directory to change to)
-dl: downloads file (args: the file name to download)
-quit: disconnects from server and closes socket
+* ls: requests and displays current working directory and all it's contents from the server
+* chdir: changes current working directory of the server (args: the directory to change to)
+* dl: downloads file (args: the file name to download)
+* quit: disconnects from server and closes socket
 
 
 
