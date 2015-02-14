@@ -1,4 +1,5 @@
 import socketserver
+import socket
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
 
@@ -17,9 +18,13 @@ if __name__ == "__main__":
 
     # Create the server, binding to specified host and port
     server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
-
+    # socket = socketserver.BaseServer
     print (" ")
     print ("Started ardeidae_py TCP server.")
+    print("Started TCP Server... waiting for clients.")
+    print ("Server host name: ", socket.gethostname(), " on ", socket.gethostbyname(socket.gethostname()), " port: ", PORT)
+    print ("fully qualified domain name: ", socket.getfqdn())
+    print ("details: ", socket.gethostbyaddr(socket.gethostbyname(socket.gethostname())))
     # Activate the server; this will keep running until you
     # interrupt the program with Ctrl-C
     server.serve_forever()
