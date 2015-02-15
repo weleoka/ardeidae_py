@@ -1,12 +1,14 @@
 import socketserver
 import socket
+import datetime
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
 
     def handle(self):
         # self.request is the TCP socket connected to the client
         self.data = self.request.recv(1024).strip()
-        print ("{} wrote: ".format(self.client_address[0]))
+        timestamp = datetime.datetime.now().strftime("%I:%M%p")
+        print (timestamp, "{} wrote: ".format(self.client_address[0]))
         print (self.data)
         # just send back the same data, but upper-cased
         self.request.sendall(self.data.upper())
@@ -14,6 +16,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 if __name__ == "__main__":
     # HOST, PORT = "sweet.student.bth.se", 8120
     # HOST, PORT = "seekers.student.bth.se", 8120
+    # HOST, PORT = "bumblebea.st", 8120
     HOST, PORT = "localhost", 8120
 
     # Create the server, binding to specified host and port
