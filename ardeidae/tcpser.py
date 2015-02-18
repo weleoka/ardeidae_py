@@ -16,7 +16,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 if __name__ == "__main__":
     # HOST, PORT = "sweet.student.bth.se", 8120
     # HOST, PORT = "seekers.student.bth.se", 8120
-    # HOST, PORT = "bumblebea.st", 8120
+    # HOST, PORT = "ardeidae.computersforpeace.net", 8120
     HOST, PORT = "localhost", 8120
 
     # Create the server, binding to specified host and port

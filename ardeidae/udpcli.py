@@ -2,8 +2,9 @@ import socket
 import sys
 
 
-# HOST, PORT = "sweet.student.bth.se", 8120
-# HOST, PORT = "seekers.student.bth.se", 8120
+# HOST, PORT = "sweet.student.bth.se", 8121
+# HOST, PORT = "seekers.student.bth.se", 8121
+# HOST, PORT = "ardeidae.computersforpeace.net", 8121
 HOST, PORT = "localhost", 8121
 data = " ".join(sys.argv[1:])
 msg = data.strip()

@@ -8,6 +8,7 @@ import sys
 # HOST, PORT = "127.0.1.1", 8120
 HOST, PORT = "localhost", 8120
 # HOST, PORT = "bumblebea.st", 8120
+# HOST, PORT = "ardeidae.computersforpeace.net", 8120
 
 data = " ".join(sys.argv[1:])
 
