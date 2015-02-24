@@ -13,10 +13,10 @@ Execute with shellscript: ./tcpser.sh
 tcpser just echos back the clients command. The tcpSer Advanced accepts arguments.
 Server default listening port: 8120
 
-### Client TCP
-Execute client with bashscript ./tcpcli.sh [input texts]
+### Client
+Execute client with bashscript ./tcpcli.sh
 
-### Advanced Client  TCP:
+### Advanced Client/Server  TCP:
 Look in the client code for HOST, PORT variable and change the values so that they correspond with the server which you are trying to connect to.
 
 
@@ -36,12 +36,11 @@ Right now the server just echo's back the clients message.
 Execute with shellscript: ./udpser.sh
 Server default listening port: 8121
 
-### Client  UDP:
-Takes one argument text-string on commandline which is then sent to server.
-Execute client with bashscript ./udpcli.sh [input texts]
+### Client
+Execute client with bashscript ./udpcli.sh
 
 
-## Sources and inspiration.
+## Sources and inspiration
 http://docs.python.org/3.1/howto/sockets.html
 
 The yifi people
