@@ -10,7 +10,6 @@ HOST, PORT = "localhost", 8120
 # HOST, PORT = "bumblebea.st", 8120
 # HOST, PORT = "ardeidae.computersforpeace.net", 8120
 
-data = " ".join(sys.argv[1:])
 
 print (" ")
 print ("Started ardeidae_py TCP client.")
@@ -23,8 +22,11 @@ try:
     sock.connect((HOST, PORT))
 
     print ("...connected.")
-    if len(sys.argv) >= abs(2):
-        sock.sendall(data.encode('utf-8'))
+
+    message = input('PROMPT: ')
+    # messageBytes = str.encode(message)
+    if message:
+        sock.sendall(message.encode('utf-8'))
         received = sock.recv(1024)
     else:
         print ("Nothing sent. Please execute with a string to transmit.")
@@ -34,6 +36,6 @@ try:
 finally:
     sock.close()
 
-print ("Sent:     {}".format(data))
+print ("Sent:     {}".format(message))
 print ("Received: {}".format(received))
 print ("...disconnected from ", HOST)

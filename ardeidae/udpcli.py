@@ -11,7 +11,7 @@ clientSocket = socket(AF_INET, SOCK_DGRAM)
 
 print (" ")
 print ("Started ardeidae_py UDP client.")
-message = input('PROMT: ')
+message = input('PROMPT: ')
 messageBytes = str.encode(message)
 
 
