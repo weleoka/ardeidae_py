@@ -1,5 +1,15 @@
 from socket import *
 import sys
+import time
+
+class Timer:
+    def __enter__(self):
+        self.start = time.clock()
+        return self
+
+    def __exit__(self, *args):
+        self.end = time.clock()
+        self.interval = self.end - self.start
 
 # HOST, PORT = "sweet.student.bth.se", 8121
 # HOST, PORT = "seekers.student.bth.se", 8121
@@ -19,15 +29,20 @@ messageBytes = str.encode(message)
 # Instead, data is directly sent to the recipient via sendto().
 
 # TIMETAKE
-clientSocket.sendto(messageBytes, (HOST, PORT))
-# TIMETAKE
-
-# TIMETAKE
-modifiedMessage, serverAddress = clientSocket.recvfrom(2048)
-# TIMETAKE
+with Timer() as t:
+    clientSocket.sendto(messageBytes, (HOST, PORT))
+print('Sending took %.03f sec.' % t.interval)
 
 print ("Sent:     ", message)
+
+# TIMETAKE
+with Timer() as t:
+    modifiedMessage, serverAddress = clientSocket.recvfrom(2048)
+
+print('Recieving took %.03f sec.' % t.interval)
+
 print ("Received: ", modifiedMessage)
+
 clientSocket.close()
 
 
