@@ -30,3 +30,21 @@ if __name__ == "__main__":
     print ("Started ardeidy_py UDP Server.", server.server_address, " Yes!")
 
     server.serve_forever()
+
+
+''' Recieve file
+buf=1024
+
+
+file = open("op.pdf",'wb')
+data,addr = server.recvfrom(buf)
+
+
+while(data):
+    file.write(data)
+    server.settimeout(2)    # Stop after 2 seconds. No way of telling when the file transfer completes.
+    data,addr = server.recvfrom(buf)
+
+file.close()
+server.close()
+'''

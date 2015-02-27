@@ -29,3 +29,16 @@ modifiedMessage, serverAddress = clientSocket.recvfrom(2048)
 print ("Sent:     ", message)
 print ("Received: ", modifiedMessage)
 clientSocket.close()
+
+
+''' sending a file over udp.
+buf = 1024
+file = open (sys.argv[1], "rb")
+data = file.read(buf)
+while (data):
+    if(clientSocket.sendto(data,addr)):
+        print "sending ..."
+        data = file.read(buf)
+clientSocket.close()
+file.close()
+'''
