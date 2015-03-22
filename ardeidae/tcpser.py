@@ -17,7 +17,7 @@ if __name__ == "__main__":
     # HOST, PORT = "sweet.student.bth.se", 8120
     # HOST, PORT = "seekers.student.bth.se", 8120
     # HOST, PORT = "ardeidae.computersforpeace.net", 8120
-    HOST, PORT = "localhost", 8120
+    HOST, PORT = "192.168.1.36", 8120
 
     # Create the server, binding to specified host and port
     server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)

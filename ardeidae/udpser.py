@@ -23,7 +23,7 @@ if __name__ == "__main__":
     # HOST, PORT = "sweet.student.bth.se", 8121
     # HOST, PORT = "seekers.student.bth.se", 8121
     # HOST, PORT = "ardeidae.computersforpeace.net", 8121
-    HOST, PORT = "localhost", 8121
+    HOST, PORT = "192.168.1.36", 8121
     server = socketserver.UDPServer((HOST, PORT), MyUDPHandler)
 
     print (" ")
