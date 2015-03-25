@@ -14,37 +14,38 @@ HOST, PORT = "localhost", 8120
 print (" ")
 print ("Started ardeidae_py TCP client.")
 print ("Trying to connect to TCP server: ", HOST, " on port: ", PORT, "...wait.")
-# Create a socket (SOCK_STREAM means a TCP socket)
+
+# Create a socket (SOCK_STREAM means a TCP socket), connect to server.
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+try:
+    sock.connect((HOST, PORT))
+    print ("...connected.")
+    print ("(please input string to echo, or integer to request file of certain number of rows)")
+finally:
+    print ("")
+   # sc.close()
 
 
-def startHere ():
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+def startHere (sc):
 
-    try:
-        # Connect to server and send data
-        sock.connect((HOST, PORT))
-
-        print ("...connected.")
-
-        print ("(please input string to echo, or integer to request file of certain size)")
+    while sc:
         message = input('PROMPT: ')
         # messageBytes = str.encode(message)
-        if message:
-            sock.sendall(message.encode('utf-8'))
-            received = sock.recv(1024)
+        if len(message) > 0:
+            if str(message) == 'quit':
+                print ("...disconnected from ", HOST)
+                sc.close()
+                sys.exit()
+            else:
+                sc.sendall(message.encode('utf-8'))
+                received = sc.recv(1024)
         else:
             print ("Nothing sent. Please input a string or integer to transmit.")
             received = "Nothing recieved because nothing sent."
-            sock.close()
 
-    finally:
-        sock.close()
-
-    if hasattr(received, 'decode'):
-        print ("Sent: " + message )
-        print ("Received: " + received.decode('utf-8'))
-    print ("...disconnected from ", HOST)
-    startHere()
+        if hasattr(received, 'decode'):
+            print ("\n-> Sent: " + message )
+            print ("<- Received: " + received.decode('utf-8'))
 
 
-startHere()
+startHere(sock)

@@ -27,49 +27,52 @@ import socket
 import datetime
 import tempfile
 import os
-# import sys
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
 
     def handle(self):
         # self.request is the TCP socket connected to the client
         self.data = self.request.recv(1024).strip()
-        sendData = 1    # Set this to 1 to send a file on client request.
-        sendDataLineCount = 25
+        recievedInteger = 0
+        filetosend = False
 
-        # If the server is running in send file mode do this.
-        if sendData == 1 and len(self.data) > 1:
-            tf = tempfile.NamedTemporaryFile()
+        if len(self.data) > 0:
 
-            for x in range(0, sendDataLineCount):
-                chunkStr = 'line:' + str(x) + '\n'
-                chunk = chunkStr.encode('utf-8')
-                tf.write(chunk)
+            try:
+                recievedInteger = int(self.data)
+            except:
+                pass
 
-            tf.seek(0)
-            for line in tf.readlines():
-                print (line)
+            if recievedInteger > 0:
+                tf = tempfile.NamedTemporaryFile()
+                for x in range(1, recievedInteger + 1):
+                    if x < 10:
+                        chunkStr = 'line : 0' + str(x) + '\n'
+                    else:
+                        chunkStr = 'line : ' + str(x) + '\n'
 
-            tf.seek(0)
-            filetosend = tf.read()
-            metadata = os.stat(tf.name)
-            tf.close()
+                    chunk = chunkStr.encode('utf-8')
+                    tf.write(chunk)
 
-            sendingConfirm = "Transfer of file: " + tf.name + " size: " + str(metadata.st_size) + "\n" #Message = "Sending " + filename + split + filesize
+                tf.seek(0)
+                filetosend = tf.read()
+                metadata = os.stat(tf.name)
+                tf.close()
 
-            self.request.sendall(sendingConfirm.encode("utf-8"))  #send confirmation message
-            self.request.sendall(filetosend)                            #send file
-            print ("Sent a file to client of " + str(metadata.st_size) + " characters.")
-            # self.shutdown()
-            # sys.exit()
+                sendingConfirm = "Transfer of file: " + tf.name + " size: " + str(metadata.st_size) + " Bytes \n" #Message = "Sending " + filename + split + filesize
 
-        # If the server is running in echo mode do this.
+                self.request.sendall(sendingConfirm.encode("utf-8"))  #send confirmation message
+                self.request.sendall(filetosend)                            #send file
+                print ("Sent a file to client of " + str(metadata.st_size) + " Bytes.")
+
+            else:
+                timestamp = datetime.datetime.now().strftime("%I:%M%p")
+                print (timestamp, "{} wrote: ".format(self.client_address[0]))
+                print (self.data)
+                # just send back the same data, but upper-cased
+                self.request.sendall(self.data.upper())
         else:
-            timestamp = datetime.datetime.now().strftime("%I:%M%p")
-            print (timestamp, "{} wrote: ".format(self.client_address[0]))
-            print (self.data)
-            # just send back the same data, but upper-cased
-            self.request.sendall(self.data.upper())
+            print ("recieved client request of absolutely nothing")
 
 
 if __name__ == "__main__":
@@ -78,9 +81,10 @@ if __name__ == "__main__":
     # HOST, PORT = "ardeidae.computersforpeace.net", 8120
     HOST, PORT = "localhost", 8120
 
-    # Create the server, binding to specified host and port
+    # Create the server, binding to specified host and port, allow reuse of listening address.
+    socketserver.TCPServer.allow_reuse_address = True;
     server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
-    # socket = socketserver.BaseServer
+
     print (" ")
     print ("Started ardeidae_py TCP server.")
     print("Started TCP Server... waiting for clients.")

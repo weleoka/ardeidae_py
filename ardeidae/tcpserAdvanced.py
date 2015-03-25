@@ -163,7 +163,7 @@ if __name__ == '__main__':
 
                         metadata = os.stat(file)
 
-                        sendingConfirm = "Sending " + file + "SpLiT" + str(metadata.st_size) + "929Z" #Message = "Sending " + filename + split + filesize
+                        sendingConfirm = "Sending " + file + " of size: " + str(metadata.st_size) + "929Z" #Message = "Sending " + filename + split + filesize
 
                         communicationSocket.sendall(sendingConfirm.encode("utf-8"))  #send confirmation message
 
