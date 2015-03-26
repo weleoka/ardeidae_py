@@ -51,7 +51,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
             except:
                 pass
 
-            if recievedInteger:
+            if recievedInteger and recievedInteger < 10000001:
                 tempFile = makeFile(recievedInteger)
 
                 # Read the information from the file.

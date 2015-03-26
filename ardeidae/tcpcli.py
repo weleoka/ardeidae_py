@@ -32,10 +32,9 @@ def startHere (theConnection):
             quitNow(theConnection)
         else:
             theConnection.sendall(message.encode('utf-8'))
-            received = theConnection.recv(1024)
 
     else:
-        print ("Nothing sent. Please input a string or integer to transmit.")
+        print ("Nothing sent. Please input a string or integer(10 million max) to transmit.")
         received = "Nothing recieved because nothing sent."
 
     if typedInteger:
@@ -43,9 +42,11 @@ def startHere (theConnection):
         outputFile(dataRecieved)
         quitNow(theConnection)
 
-    elif hasattr(received, 'decode'):
+    else:
+        received = theConnection.recv(1024)
         print ("\n-> Sent: " + message )
-        print ("<- Received: " + received.decode('utf-8'))
+        if hasattr(received, 'decode'):
+            print ("<- Received: " + received.decode('utf-8'))
         quitNow(theConnection)
 
 
@@ -53,15 +54,13 @@ def startHere (theConnection):
 def outputFile(dataStr):
     print("Length of recieved data is: ")
     print(len(dataStr))
-    print (dataStr.decode('utf-8'))
+    # print (dataStr.decode('utf-8'))
 
 
 
 def recv_file_with_size(cnct, size):
-    print("Size:", size)
     msg = b''
     while len(msg) < size:
-        print("msg length:", len(msg))
         chunk = cnct.recv(size-len(msg))
         if chunk == '':
             raise RuntimeError("Socket connection broken")
