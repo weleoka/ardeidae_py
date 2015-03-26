@@ -1,4 +1,34 @@
-import socketserver
+'''
+This program generates a file of a certain length and sends it to a client.
+If anything other than an integer is recieved from client it will echo the string back.
+After processing one request the server will shut down.
+'''
+
+import socketserver, socket, datetime, tempfile, os, sys
+
+
+
+def makeFile(ri):
+    tf = tempfile.NamedTemporaryFile()
+
+    for x in range(0, ri):
+        chunkStr = 'A'
+        chunk = chunkStr.encode('utf-8')
+        tf.write(chunk)
+
+    return tf
+
+
+
+def printStartupMsg():
+    print (" ")
+    print ("Started ardeidae_py UDP server.")
+    print("Started UDP Server... waiting for clients.")
+    print ("Server host name: ", socket.gethostname(), " on ", socket.gethostbyname(socket.gethostname()), " port: ", PORT)
+    print ("fully qualified domain name: ", socket.getfqdn())
+    print ("details: ", socket.gethostbyaddr(socket.gethostbyname(socket.gethostname())))
+
+
 
 class MyUDPHandler(socketserver.BaseRequestHandler):
     """
@@ -9,42 +39,63 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
     """
 
     def handle(self):
+
+        # self.request is the UDP socket connected to the client
         data = self.request[0]
         socket = self.request[1]
+        recievedInteger = False
+        filetosend = False
 
-        print ("{} wrote:".format(self.client_address[0]))
-        print (data)
-        socket.sendto(data.upper(), self.client_address)
+        if len(data) > 0:
+
+            try:
+                recievedInteger = int(data)
+            except:
+                pass
+
+            if recievedInteger and recievedInteger < 10000001:
+                tempFile = makeFile(recievedInteger)
+
+                # Read the information from the file.
+                tempFile.seek(0)
+                filetosend = tempFile.read()
+                metadata = os.stat(tempFile.name)
+                tempFile.close()
+
+                # send confirmation message
+                # sendingConfirm = "Transfer of file: " + tempFile.name + " size: " + str(metadata.st_size) + " Bytes starting...\n"
+                # socket.sendto(sendingConfirm.encode("utf-8"), self.client_address)
+
+                #send file
+                print ("\nSending a file (", tempFile.name, ") to client of " + str(metadata.st_size) + " Bytes.")
+                socket.sendto(filetosend, self.client_address)
+
+            else:
+                timestamp = datetime.datetime.now().strftime("%I:%M%p")
+                print ("\n", timestamp, "{} wrote: ".format(self.client_address))
+                print (data)
+                # just send back the same data, but upper-cased
+                socket.sendto(data.upper(), self.client_address)
+
+        else:
+            print ("recieved client request of absolutely nothing.")
+
 
     def finish(self):
         print ("Server completed the job for ", self.client_address)
+
+
+
 
 if __name__ == "__main__":
     # HOST, PORT = "sweet.student.bth.se", 8121
     # HOST, PORT = "seekers.student.bth.se", 8121
     # HOST, PORT = "ardeidae.computersforpeace.net", 8121
-    HOST, PORT = "192.168.1.36", 8121
+    # HOST, PORT = "192.168.1.36", 8121
+    HOST, PORT = "localhost", 8121
+
     server = socketserver.UDPServer((HOST, PORT), MyUDPHandler)
 
-    print (" ")
-    print ("Started ardeidy_py UDP Server.", server.server_address, " Yes!")
+    printStartupMsg()
 
     server.serve_forever()
-
-
-''' Recieve file
-buf=1024
-
-
-file = open("op.pdf",'wb')
-data,addr = server.recvfrom(buf)
-
-
-while(data):
-    file.write(data)
-    server.settimeout(2)    # Stop after 2 seconds. No way of telling when the file transfer completes.
-    data,addr = server.recvfrom(buf)
-
-file.close()
-server.close()
-'''

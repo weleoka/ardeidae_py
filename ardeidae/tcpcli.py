@@ -20,6 +20,7 @@ def printStartupMsg():
 
 def startHere (theConnection):
     message = input('PROMPT: ')
+    messageBytes = str.encode(message)
 
     typedInteger = False
     try:
@@ -31,7 +32,7 @@ def startHere (theConnection):
         if str(message) == 'quit':
             quitNow(theConnection)
         else:
-            theConnection.sendall(message.encode('utf-8'))
+            theConnection.sendall(messageBytes)
 
     else:
         print ("Nothing sent. Please input a string or integer(10 million max) to transmit.")
@@ -79,10 +80,11 @@ def quitNow (cnct):
 
 # Create a socket (SOCK_STREAM means a TCP socket), connect to server.
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+printStartupMsg()
 try:
     sock.connect((HOST, PORT))
     print ("...connected.")
-    print ("(please input string to echo, or integer to request file of certain number of rows)")
+    print ("(please input string to echo, or integer to request file of certain number Bytes).")
 except:
     print ("Failed to connect to server.")
     sys.exit()

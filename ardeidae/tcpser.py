@@ -1,5 +1,5 @@
 '''
-This program generates a random file of certain length and sends it to a client.
+This program generates a file of a certain length and sends it to a client.
 If anything other than an integer is recieved from client it will echo the string back.
 After processing one request the server will shut down.
 '''
@@ -27,12 +27,6 @@ def printStartupMsg():
     print ("Server host name: ", socket.gethostname(), " on ", socket.gethostbyname(socket.gethostname()), " port: ", PORT)
     print ("fully qualified domain name: ", socket.getfqdn())
     print ("details: ", socket.gethostbyaddr(socket.gethostbyname(socket.gethostname())))
-
-
-
-def requestCompleted ():
-    print ("The servers job is done.")
-    print ("The TCP connection will be in Wait state, connect with a client again or ctrl + c to quit.")
 
 
 
@@ -67,7 +61,6 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                 #send file
                 print ("\nSending a file (", tempFile.name, ") to client of " + str(metadata.st_size) + " Bytes.")
                 self.request.sendall(filetosend)
-                requestCompleted()
 
             else:
                 timestamp = datetime.datetime.now().strftime("%I:%M%p")
@@ -75,11 +68,15 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                 print (self.data)
                 # just send back the same data, but upper-cased
                 self.request.sendall(self.data.upper())
-                requestCompleted()
 
         else:
             print ("recieved client request of absolutely nothing.")
-            requestCompleted()
+
+
+    def finish(self):
+        print ("Server completed the job for ", self.client_address)
+        print ("The TCP connection will be in Wait state, connect with the client again or ctrl + c to quit.")
+
 
 
 if __name__ == "__main__":
