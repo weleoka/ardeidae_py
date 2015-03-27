@@ -66,8 +66,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
                 # sendingConfirm = "Transfer of file: " + tempFile.name + " size: " + str(metadata.st_size) + " Bytes starting...\n"
                 # socket.sendto(sendingConfirm.encode("utf-8"), self.client_address)
 
-                #send file
-                print ("\nSending a file (", tempFile.name, ") to client of " + str(metadata.st_size) + " Bytes.")
+                print ("\nSending a file (", tempFile.name, ") to client of length: " + str(metadata.st_size) + " and size: " + str(sys.getsizeof(filetosend)) + " Bytes.")
                 socket.sendto(filetosend, self.client_address)
 
             else:
@@ -85,7 +84,9 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
         print ("Server completed the job for ", self.client_address)
 
 
-
+'''
+Find out how to buffer and send with UDP like the tcp.sock doest with "sendall".
+'''
 
 if __name__ == "__main__":
     # HOST, PORT = "sweet.student.bth.se", 8121

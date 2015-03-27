@@ -1,5 +1,6 @@
 import socket
 import sys
+import time
 
 # HOST, PORT = "sweet.student.bth.se", 8120                           #connect to bth, port
 # HOST, PORT = "seekers.student.bth.se", 8120                           #connect to bth, port
@@ -8,6 +9,17 @@ import sys
 HOST, PORT = "localhost", 8120
 # HOST, PORT = "bumblebea.st", 8120
 # HOST, PORT = "ardeidae.computersforpeace.net", 8120
+
+
+
+class Timer:
+    def __enter__(self):
+        self.start = time.clock()
+        return self
+
+    def __exit__(self, *args):
+        self.end = time.clock()
+        self.interval = self.end - self.start
 
 
 
@@ -32,19 +44,30 @@ def startHere (theConnection):
         if str(message) == 'quit':
             quitNow(theConnection)
         else:
-            theConnection.sendall(messageBytes)
+            # TIMETAKE
+            with Timer() as t:
+                theConnection.sendall(messageBytes)
+            print ('Sending took %.03f sec.' % t.interval)
 
     else:
         print ("Nothing sent. Please input a string or integer(10 million max) to transmit.")
         received = "Nothing recieved because nothing sent."
 
     if typedInteger:
-        dataRecieved = recv_file_with_size (theConnection, typedInteger)
+        # TIMETAKE
+        with Timer() as t:
+            dataRecieved = recv_file_with_size (theConnection, typedInteger)
+        print ('Recieving took %.03f sec.' % t.interval)
+
         outputFile(dataRecieved)
         quitNow(theConnection)
 
     else:
-        received = theConnection.recv(1024)
+        # TIMETAKE
+        with Timer() as t:
+            received = theConnection.recv(1024)
+        print ('Recieving took %.03f sec.' % t.interval)
+
         print ("\n-> Sent: " + message )
         if hasattr(received, 'decode'):
             print ("<- Received: " + received.decode('utf-8'))

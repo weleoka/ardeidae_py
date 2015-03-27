@@ -1,4 +1,4 @@
-import socket
+from socket import *
 import sys
 import time
 
@@ -27,42 +27,83 @@ def printStartupMsg():
 
 
 
-def quitNow (cnct):
-    cnct.close()
+def quitNow ():
     print ("Shutting down client...")
     sys.exit()
 
 
 
+def outputFile(dataStr):
+    print ("Length of recieved data is: ")
+    print (len(dataStr))
+    print ("Size is: ")
+    print (str(sys.getsizeof(dataStr)))
+    # print (dataStr.decode('utf-8'))
+
+
+
+def recv_file_with_size(cnct, size):
+    msg = b''
+    while len(msg) < size:
+        chunk, serverAddress = cnct.recvfrom(size-len(msg))
+        if chunk == '':
+            raise RuntimeError("Socket connection broken")
+        msg = msg + chunk
+    return msg
+
+
+
 def startHere (theConnection):
-    # As you can see, there is no connect() call; UDP has no connections.
-    # Instead, data is directly sent to the recipient via sendto().
     message = input('PROMPT: ')
     messageBytes = str.encode(message)
 
-    # TIMETAKE
-    with Timer() as t:
-        theConnection.sendto(messageBytes, (HOST, PORT))
-    print('Sending took %.03f sec.' % t.interval)
+    typedInteger = False
+    try:
+        typedInteger = int(message)
+    except:
+        pass
 
-    print ("Sent:     ", message)
+    if len(message) > 0:
+        if str(message) == 'quit':
+            quitNow()
+        else:
+            # TIMETAKE
+            with Timer() as t:
+                theConnection.sendto(messageBytes, (HOST, PORT))
+            print ('Sending took %.03f sec.' % t.interval)
+    else:
+        print ("Nothing sent. Please input a string or integer(10 million max) to transmit.")
+        received = "Nothing recieved because nothing sent."
 
-    # TIMETAKE
-    with Timer() as t:
-        dataRecieved, serverAddress = theConnection.recvfrom(2048)
+    if typedInteger:
+        # TIMETAKE
+        with Timer() as t:
+            dataRecieved = recv_file_with_size (theConnection, typedInteger)
+        print ('Recieving took %.03f sec.' % t.interval)
 
-    print('Recieving took %.03f sec.' % t.interval)
+        outputFile(dataRecieved)
+        quitNow()
 
-    print ("Received: ", dataRecieved)
-    print("Received {0} bytes of data recieved.".format(sys.getsizeof(dataRecieved)))
+    else:
+        print ("Sent:     ", message)
 
-    quitNow(theConnection)
+        # TIMETAKE
+        with Timer() as t:
+            dataRecieved, serverAddress = theConnection.recvfrom(2048)
+        print ('Recieving took %.03f sec.' % t.interval)
+
+        print ("Received: ", dataRecieved)
+        print ("Received {0} bytes of data recieved.".format(sys.getsizeof(dataRecieved)))
+
+        quitNow()
 
 
 
+    # As you can see, there is no connect() call; UDP has no connections.
+    # Instead, data is directly sent to the recipient via sendto().
 # SOCK_DGRAM is the socket type to use for UDP sockets
-clientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-# clientSocket = socket(AF_INET, SOCK_DGRAM)
+# clientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+clientSocket = socket(AF_INET, SOCK_DGRAM)
 printStartupMsg()
 
 startHere(clientSocket)
