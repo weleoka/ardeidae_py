@@ -6,6 +6,8 @@ import time
 import tempfile
 import os
 import re
+from ardei_utils import ardei_client_utils
+Utils = ardei_client_utils
 
 
 """
@@ -40,20 +42,6 @@ RcvTimeOut = 5
 
 
 """
-Time object.
-"""
-class Timer:
-    def __enter__(self):
-        self.start = time.clock()
-        return self
-
-    def __exit__(self, *args):
-        self.end = time.clock()
-        self.interval = self.end - self.start
-
-
-
-"""
 Startup and quit functions.
 """
 def print_startup_msg():
@@ -64,75 +52,6 @@ def print_startup_msg():
 def quit_now ():
     print ("Shutting down client...")
     sys.exit()
-
-
-
-"""
-File data recieved functions.
-"""
-def recv_file_with_size(cnct):
-    tf = tempfile.NamedTemporaryFile()
-    msg = b''
-
-    while True:
-        try:
-            chunkStr, serverAddress = cnct.recvfrom(1024)
-            tf.write(chunkStr)
-        except socket.timeout:
-            return tf
-
-    tf.flush() # Flush the write buffer to file.
-    return tf
-
-def print_file_stats (rf):
-    metadata = os.stat(rf.name)
-    print ("Recieved file \n (", rf.name, ")") # \n size: " + str(metadata.st_size) + " bytes.")
-
-def print_file_contents (rf):
-    buf = 10
-    i = 0
-    rf.seek(0)
-
-    data = rf.read(buf)
-
-    while (data):
-        tmpstr = data.decode('utf-8')
-        if PrintFile:
-            print (tmpstr)
-        i += len(tmpstr)
-        data = rf.read(buf)
-
-    print ("Total recieved: " +str(i) + " chars.")
-    rf.close()
-
-
-
-"""
-String data recieved functions.
-"""
-def print_data_stats(rd):
-    print ("Received {0} bytes of data.".format(sys.getsizeof(rd)))
-
-def print_data_contents(rd):
-    print (rd)
-
-
-
-"""
-Monitor the response from server for confirmation message.
-"""
-def monitor_server_response (cnct):
-    while True:
-        try:
-            chunkStr, serverAddress = cnct.recvfrom(1024)
-            response = chunkStr.decode('utf-8')
-            if re.search('file_prepared', response):
-                return True
-            else:
-                print ("No valid response recieved from server")
-                return False
-        except socket.timeout:
-            return False
 
 
 
@@ -156,10 +75,9 @@ def start_here (theConnection):
 
         else:
             # TIMETAKE
-            with Timer() as t:
+            with Utils.Timer() as t:
                 theConnection.sendto(messageBytes, (HOST, PORT))
             print ('Sending took %.03f sec.' % t.interval)
-
             print ("Please wait for " + str(RcvTimeOut) + " seconds for the server response.\n..........")
 
             if typedInteger:
@@ -167,30 +85,30 @@ def start_here (theConnection):
                 theConnection.settimeout(RcvTimeOut)
 
                 # Wait for server to generate confirmation message
-                if monitor_server_response(theConnection):
+                if Utils.monitor_server_response(theConnection):
                     # TIMETAKE
-                    with Timer() as t:
-                        dataRecieved = recv_file_with_size (theConnection, typedInteger)
+                    with Utils.Timer() as t:
+                        dataRecieved = Utils.recv_file_with_size (theConnection)
                     print ('Recieving took %.03f sec.' % t.interval)
 
-                    print_file_stats(dataRecieved)
-                    print_file_contents(dataRecieved)
+                    Utils.print_file_stats(dataRecieved)
+                    Utils.print_file_contents(dataRecieved, PrintFile)
 
                 else:
                     print ("Server response delayed or missing.")
-                    quit_now()
+                    Utils.quit_now()
 
             else:
                 # Set the timeout to 5 seconds.
                 theConnection.settimeout(RcvTimeOut)
 
                 # TIMETAKE
-                with Timer() as t:
+                with Utils.Timer() as t:
                     dataRecieved, serverAddress = theConnection.recvfrom(1024)
                 print ('Recieving took %.03f sec.' % t.interval)
 
-                print_data_stats(dataRecieved)
-                print_data_contents(dataRecieved)
+                Utils.print_data_stats(dataRecieved)
+                Utils.print_data_contents(dataRecieved)
                 quit_now ()
 
     else:

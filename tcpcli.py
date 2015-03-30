@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 import socket
+from socket import AF_INET, SOCK_STREAM
 import sys
-import time
+from ardei_utils import ardei_client_utils
+Utils = ardei_client_utils
 
 # HOST, PORT = "sweet.student.bth.se", 8120                           #connect to bth, port
 # HOST, PORT = "seekers.student.bth.se", 8120                           #connect to bth, port
@@ -11,45 +13,22 @@ HOST, PORT = "localhost", 8120
 # HOST, PORT = "bumblebea.st", 8120
 # HOST, PORT = "ardeidae.computersforpeace.net", 8120
 
-
-
-class Timer:
-    def __enter__(self):
-        self.start = time.clock()
-        return self
-
-    def __exit__(self, *args):
-        self.end = time.clock()
-        self.interval = self.end - self.start
+# Specify if recieved files are to be output to terminal or not.
+PrintFile = False
+# How long to wait before quitting the recieve state.
+RcvTimeOut = 5
 
 
 
-def printStartupMsg():
+"""
+Startup and quit functions.
+"""
+def print_startup_msg():
     print (" ")
     print ("Started ardeidae_py TCP client.")
     print ("Trying to connect to TCP server: ", HOST, " on port: ", PORT, "...wait.")
 
-
-
-def outputFile(dataStr):
-    print("Length of recieved data is: ")
-    print(len(dataStr))
-    # print (dataStr.decode('utf-8'))
-
-
-
-def recv_file_with_size(cnct, size):
-    msg = b''
-    while len(msg) < size:
-        chunk = cnct.recv(size-len(msg))
-        if chunk == '':
-            raise RuntimeError("Socket connection broken")
-        msg = msg + chunk
-    return msg
-
-
-
-def quitNow (cnct):
+def quit_now (cnct):
     cnct.close()
     print ("...disconnected from ", HOST)
     print ("Shutting down client...")
@@ -57,7 +36,10 @@ def quitNow (cnct):
 
 
 
-def startHere (theConnection):
+"""
+Main function
+"""
+def start_here (theConnection):
     typedInteger = False
 
     message = input('PROMPT: ')
@@ -70,33 +52,45 @@ def startHere (theConnection):
 
     if len(message) > 0:
         if str(message) == 'quit':
-            quitNow(theConnection)
+            quit_now(theConnection)
 
         else:
             # TIMETAKE
             with Timer() as t:
                 theConnection.sendall(messageBytes)
             print ('Sending took %.03f sec.' % t.interval)
+            print ("Please wait for " + str(RcvTimeOut) + " seconds for the server response.\n..........")
 
             if typedInteger:
-                # TIMETAKE
-                with Timer() as t:
-                    dataRecieved = recv_file_with_size (theConnection, typedInteger)
-                print ('Recieving took %.03f sec.' % t.interval)
+                # Set the timeout.
+                theConnection.settimeout(RcvTimeOut)
 
-                outputFile(dataRecieved)
-                quitNow(theConnection)
+                # Wait for server to generate confirmation message
+                if monitor_server_response(theConnection):
+                    # TIMETAKE
+                    with Timer() as t:
+                        dataRecieved = recv_file_with_size (theConnection)
+                    print ('Recieving took %.03f sec.' % t.interval)
+
+                    print_file_stats(dataRecieved)
+                    print_file_contents(dataRecieved, PrintFile)
+
+                else:
+                    print ("Server response delayed or missing.")
+                    quit_now(theConnection)
 
             else:
+                # Set the timeout to 5 seconds.
+                theConnection.settimeout(RcvTimeOut)
+
                 # TIMETAKE
                 with Timer() as t:
-                    received = theConnection.recv(1024)
+                    dataRecieved = theConnection.recv(1024)
                 print ('Recieving took %.03f sec.' % t.interval)
 
-                print ("\n-> Sent: " + message )
-                if hasattr(received, 'decode'):
-                    print ("<- Received: " + received.decode('utf-8'))
-                quitNow(theConnection)
+                print_data_stats(dataRecieved)
+                print_data_contents(dataRecieved)
+                quit_now (theConnection)
 
     else:
         print ("Nothing sent. Please input a string or integer(10 million max) to transmit.")
@@ -105,14 +99,14 @@ def startHere (theConnection):
 
 
 # Create a socket (SOCK_STREAM means a TCP socket), connect to server.
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-printStartupMsg()
+clientSocket = socket.socket(AF_INET, SOCK_STREAM)
+print_startup_msg()
 try:
-    sock.connect((HOST, PORT))
+    clientSocket.connect((HOST, PORT))
     print ("...connected.")
     print ("(please input string to echo, or integer to request file of certain number Bytes).")
+    start_here(clientSocket)
 except:
     print ("Failed to connect to server.")
     sys.exit()
 
-startHere(sock)

@@ -5,7 +5,8 @@ If anything other than an integer is recieved from client it will echo the strin
 After processing one request the server will shut down.
 '''
 
-import socketserver, socket, datetime, tempfile, os, sys
+import socketserver, socket, datetime, os, sys
+from ardei_utils import ardei_server_utils
 
 # HOST, PORT = "sweet.student.bth.se", 8121
 # HOST, PORT = "seekers.student.bth.se", 8121
@@ -13,17 +14,7 @@ import socketserver, socket, datetime, tempfile, os, sys
 # HOST, PORT = "192.168.1.36", 8121
 HOST, PORT = "localhost", 8121
 
-
-
-def make_file(ri):
-    tf = tempfile.NamedTemporaryFile()
-    chunkStr = 'A'
-    for x in range(0, ri):
-        chunk = chunkStr.encode('utf-8')
-        tf.write(chunk)
-
-    tf.flush() # Flush the write buffer to file.
-    return tf
+Utils = ardei_server_utils
 
 
 
@@ -51,7 +42,6 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
         socket = self.request[1]
         recievedInteger = False
         filetosend = False
-        buf =1024
 
         if len(data) > 0:
 
@@ -61,22 +51,23 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
                 pass
 
             if recievedInteger and recievedInteger < 100000001:
-                tempFile = make_file(recievedInteger)
+                tempFile = Utils.make_file(recievedInteger)
                 metadata = os.stat(tempFile.name)
                 print ("\nSending a file \n (", tempFile.name, ") \n size: " + str(metadata.st_size) + " bytes.")
 
                 # send confirmation message
                 confirmation = 'file_prepared'
-                # confirmation = "Transfer of file: " + tempFile.name + " size: " + str(metadata.st_size) + " Bytes starting...\n"
+
                 if socket.sendto(confirmation.encode('utf-8'), self.client_address):
                     print ("confirmation sent!!!")
 
                     # Read the information from the file.
                     tempFile.seek(0)
-                    data = tempFile.read(buf)
-                    while (data):
-                        if(socket.sendto(data, self.client_address)):
-                            data = tempFile.read(buf)
+                    buf = 1024
+                    fileData = tempFile.read(buf)
+                    while (fileData):
+                        if(socket.sendto(fileData, self.client_address)):
+                            fileData = tempFile.read(buf)
                     tempFile.close()
 
             elif recievedInteger and recievedInteger > 100000001:
