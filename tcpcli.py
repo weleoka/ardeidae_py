@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import socket
 import sys
 import time
@@ -30,51 +31,6 @@ def printStartupMsg():
 
 
 
-def startHere (theConnection):
-    message = input('PROMPT: ')
-    messageBytes = str.encode(message)
-
-    typedInteger = False
-    try:
-        typedInteger = int(message)
-    except:
-        pass
-
-    if len(message) > 0:
-        if str(message) == 'quit':
-            quitNow(theConnection)
-        else:
-            # TIMETAKE
-            with Timer() as t:
-                theConnection.sendall(messageBytes)
-            print ('Sending took %.03f sec.' % t.interval)
-
-    else:
-        print ("Nothing sent. Please input a string or integer(10 million max) to transmit.")
-        received = "Nothing recieved because nothing sent."
-
-    if typedInteger:
-        # TIMETAKE
-        with Timer() as t:
-            dataRecieved = recv_file_with_size (theConnection, typedInteger)
-        print ('Recieving took %.03f sec.' % t.interval)
-
-        outputFile(dataRecieved)
-        quitNow(theConnection)
-
-    else:
-        # TIMETAKE
-        with Timer() as t:
-            received = theConnection.recv(1024)
-        print ('Recieving took %.03f sec.' % t.interval)
-
-        print ("\n-> Sent: " + message )
-        if hasattr(received, 'decode'):
-            print ("<- Received: " + received.decode('utf-8'))
-        quitNow(theConnection)
-
-
-
 def outputFile(dataStr):
     print("Length of recieved data is: ")
     print(len(dataStr))
@@ -98,6 +54,53 @@ def quitNow (cnct):
     print ("...disconnected from ", HOST)
     print ("Shutting down client...")
     sys.exit()
+
+
+
+def startHere (theConnection):
+    typedInteger = False
+
+    message = input('PROMPT: ')
+    messageBytes = str.encode(message)
+
+    try:
+        typedInteger = int(message)
+    except:
+        pass
+
+    if len(message) > 0:
+        if str(message) == 'quit':
+            quitNow(theConnection)
+
+        else:
+            # TIMETAKE
+            with Timer() as t:
+                theConnection.sendall(messageBytes)
+            print ('Sending took %.03f sec.' % t.interval)
+
+            if typedInteger:
+                # TIMETAKE
+                with Timer() as t:
+                    dataRecieved = recv_file_with_size (theConnection, typedInteger)
+                print ('Recieving took %.03f sec.' % t.interval)
+
+                outputFile(dataRecieved)
+                quitNow(theConnection)
+
+            else:
+                # TIMETAKE
+                with Timer() as t:
+                    received = theConnection.recv(1024)
+                print ('Recieving took %.03f sec.' % t.interval)
+
+                print ("\n-> Sent: " + message )
+                if hasattr(received, 'decode'):
+                    print ("<- Received: " + received.decode('utf-8'))
+                quitNow(theConnection)
+
+    else:
+        print ("Nothing sent. Please input a string or integer(10 million max) to transmit.")
+        received = "Nothing recieved because nothing sent."
 
 
 

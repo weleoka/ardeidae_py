@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 '''
 This program generates a file of a certain length and sends it to a client.
 If anything other than an integer is recieved from client it will echo the string back.
