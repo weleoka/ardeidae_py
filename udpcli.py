@@ -198,11 +198,6 @@ def start_here (theConnection):
         received = "Nothing recieved because nothing sent."
 
 
-
-# As you can see, there is no connect() call; UDP has no connections.
-# Instead, data is directly sent to the recipient via sendto().
-# SOCK_DGRAM is the socket type to use for UDP sockets
-# clientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 clientSocket = socket.socket(AF_INET, SOCK_DGRAM)
 
 print_startup_msg()
