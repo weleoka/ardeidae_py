@@ -37,7 +37,7 @@ HOST, PORT = "localhost", 8121
 # Specify if recieved files are to be output to terminal or not.
 PrintFile = False
 # How long to wait before quitting the recieve state.
-RcvTimeOut = 5
+RcvTimeOut = 10
 
 
 
@@ -96,7 +96,7 @@ def start_here (theConnection):
 
                 else:
                     print ("Server response delayed or missing.")
-                    Utils.quit_now()
+                    quit_now()
 
             else:
                 # Set the timeout to 5 seconds.
