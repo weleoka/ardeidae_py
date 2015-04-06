@@ -27,9 +27,6 @@ class Timer:
 
 
 """
-File data recieved functions.
-"""
-"""
 Recieve data and write to named temporary file.
 parameters:
     cnct: The connection.
