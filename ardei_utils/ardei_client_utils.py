@@ -3,6 +3,12 @@ import tempfile
 import os
 import re
 import socket
+"""
+These are the reqired functions for the Ardeiday_py clients to run properly.
+
+Functions include a simple timer module, as well as functions for recieving a file over UDP or TCP,
+and also to test a response from a server for confirmations and status updates.
+"""
 
 
 
@@ -23,6 +29,13 @@ class Timer:
 """
 File data recieved functions.
 """
+"""
+Recieve data and write to named temporary file.
+parameters:
+    cnct: The connection.
+
+returns tf, temporaryfile instance.
+"""
 def recv_file_with_size(cnct):
     tf = tempfile.NamedTemporaryFile()
     msg = b''
@@ -37,10 +50,30 @@ def recv_file_with_size(cnct):
     tf.flush() # Flush the write buffer to file.
     return tf
 
+
+
+"""
+Output to console file stats.
+parameters:
+    rf: the recieved file.
+
+returns void.
+"""
 def print_file_stats (rf):
     metadata = os.stat(rf.name)
     print ("Recieved file \n (", rf.name, ")") # \n size: " + str(metadata.st_size) + " bytes.")
 
+
+
+"""
+Output to console file contents.
+Depends on settings specified. Will either print contents, or only length of conents.
+parameters:
+    rf: the recieved file.
+    PrintFile: the settings parameter.
+
+returns void.
+"""
 def print_file_contents (rf, PrintFile):
     buf = 10
     i = 0
@@ -61,18 +94,35 @@ def print_file_contents (rf, PrintFile):
 
 
 """
-String data recieved functions.
+Output to console information about recieved data.
+parameters:
+    rd: the recieved data.
+
+returns void.
 """
 def print_data_stats(rd):
     print ("Received {0} bytes of data.".format(sys.getsizeof(rd)))
 
+
+
+"""
+Output to console recieved data.
+parameters:
+    rd: the recieved data.
+
+returns void.
+"""
 def print_data_contents(rd):
     print (rd)
 
 
 
 """
-Monitor the response from server for confirmation message.
+Decide what to do after a response from server.
+parameters:
+    cnct: The connection.
+
+returns boolean.
 """
 def monitor_server_response (cnct):
     while True:

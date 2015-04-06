@@ -5,8 +5,10 @@ import sys
 from ardei_utils import ardei_client_utils
 Utils = ardei_client_utils
 
-# HOST, PORT = "sweet.student.bth.se", 8120                           #connect to bth, port
-# HOST, PORT = "seekers.student.bth.se", 8120                           #connect to bth, port
+
+
+# HOST, PORT = "sweet.student.bth.se", 8120               #connect to bth, port
+# HOST, PORT = "seekers.student.bth.se", 8120            #connect to bth, port
 # HOST, PORT = "192.168.1.36", 8120                           #connect to localhost, port
 # HOST, PORT = "127.0.1.1", 8120
 HOST, PORT = "localhost", 8120
