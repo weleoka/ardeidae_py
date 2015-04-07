@@ -1,6 +1,6 @@
 # ardeidae_py
 
-## TCP and UDP server-client written in Python.
+## TCP and UDP server-client pair written in Python.
 
 This is for learning purposes whereby simple data packets can be sent and recieved.
 The recommended tool to complement this experiment is Wireshark.
@@ -9,7 +9,7 @@ All servers and clients strive to confirm to python 3 standards.
 
 ## TCP
 ### Server
-Execute as hellscript: ./tcpser.py
+Execute as shellscript: ./tcpser.py
 tcpser just echos back the clients command. Or if an integer is entered at the prompt then the server will generate a file of the corresponding number of characters and send that file to client.
 Server default listening port: 8120
 
