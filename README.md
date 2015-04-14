@@ -5,7 +5,7 @@
 This is for learning purposes whereby simple data packets can be sent and recieved.
 The recommended tool to complement this experiment is Wireshark.
 
-All servers and clients strive to confirm to python 3 standards.
+All servers and clients call for python 3.
 
 ## TCP
 ### Server
@@ -32,6 +32,7 @@ Input "ls" "chdir" "dl" and "quit" commands at prompt. Any other input returns e
 
 ## UDP
 ### Server
+Execute as shellscript: ./udpser.py
 The server just echo's back the clients message. Or if an integer is entered at the prompt then the server will generate a file of the corresponding number of characters and send that file to client.
 Execute as shellscript: ./udpser.py
 Server default listening port: 8121
@@ -39,6 +40,10 @@ Server default listening port: 8121
 ### Client
 Execute client as shellscript ./udpcli.py
 
+
+## Code and Notes
+* The server imports dependencies from ardei_server_utils.py and the clients from ardei_client_utils.py.
+* The servers by default do not accept requests for greater than 10 000 000 character transfers.
 
 ## Sources and inspiration
 http://docs.python.org/3.1/howto/sockets.html
