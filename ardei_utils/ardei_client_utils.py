@@ -3,6 +3,7 @@ import tempfile
 import os
 import re
 import socket
+import sys
 """
 These are the reqired functions for the Ardeiday_py clients to run properly.
 
@@ -27,13 +28,13 @@ class Timer:
 
 
 """
-Recieve data and write to named temporary file.
+UDP Recieve data and write to named temporary file.
 parameters:
     cnct: The connection.
 
 returns tf, temporaryfile instance.
 """
-def recv_file_with_size(cnct):
+def recv_file_with_size_UDP(cnct):
     tf = tempfile.NamedTemporaryFile()
     msg = b''
 
@@ -41,8 +42,37 @@ def recv_file_with_size(cnct):
         try:
             chunkStr = cnct.recv(1024)
             tf.write(chunkStr)
-        except socket.timeout:
+        except cnct.timeout:
             return tf
+
+    tf.flush() # Flush the write buffer to file.
+    return tf
+
+
+
+"""
+TCP Recieve data and write to named temporary file.
+parameters:
+    cnct: The connection.
+    size: the file size requested.
+
+returns tf, temporaryfile instance.
+"""
+def recv_file_with_size_TCP(cnct, MSGLEN):
+    tf = tempfile.NamedTemporaryFile()
+    msg = b''
+    i = 10
+
+    while i < MSGLEN:
+        chunk = cnct.recv(MSGLEN-len(msg))
+        if chunk == '':
+            raise RuntimeError("socket connection broken")
+        tf.write(chunk)
+
+        tmpstr = chunk.decode('utf-8')
+        i = i + len(tmpstr)
+        if i == 11:
+            print ("AYARTAERTATETR")
 
     tf.flush() # Flush the write buffer to file.
     return tf
@@ -127,6 +157,7 @@ def monitor_server_response (cnct):
             chunkStr = cnct.recv(1024)
             response = chunkStr.decode('utf-8')
             if re.search('file_prepared', response):
+                print ("Server has prepared the file, recieving...")
                 return True
             else:
                 print ("No valid response recieved from server")

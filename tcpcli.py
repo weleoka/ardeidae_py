@@ -57,41 +57,30 @@ def start_here (theConnection):
             quit_now(theConnection)
 
         else:
-            # TIMETAKE
-            with Timer() as t:
-                theConnection.sendall(messageBytes)
-            print ('Sending took %.03f sec.' % t.interval)
-            print ("Please wait for " + str(RcvTimeOut) + " seconds for the server response.\n..........")
+            theConnection.sendall(messageBytes)
 
             if typedInteger:
-                # Set the timeout.
-                theConnection.settimeout(RcvTimeOut)
+                print ("Please wait for " + str(RcvTimeOut) + " seconds for the server to prepare your file.\n..........")
 
                 # Wait for server to generate confirmation message
-                if monitor_server_response(theConnection):
+                if Utils.monitor_server_response(theConnection):
                     # TIMETAKE
-                    with Timer() as t:
-                        dataRecieved = recv_file_with_size (theConnection)
+                    with Utils.Timer() as t:
+                        dataRecieved = Utils.recv_file_with_size_TCP(theConnection, typedInteger)
                     print ('Recieving took %.03f sec.' % t.interval)
 
-                    print_file_stats(dataRecieved)
-                    print_file_contents(dataRecieved, PrintFile)
+                    Utils.print_file_stats(dataRecieved)
+                    Utils.print_file_contents(dataRecieved, PrintFile)
 
                 else:
                     print ("Server response delayed or missing.")
                     quit_now(theConnection)
 
             else:
-                # Set the timeout to 5 seconds.
-                theConnection.settimeout(RcvTimeOut)
+                dataRecieved = theConnection.recv(1024)
 
-                # TIMETAKE
-                with Timer() as t:
-                    dataRecieved = theConnection.recv(1024)
-                print ('Recieving took %.03f sec.' % t.interval)
-
-                print_data_stats(dataRecieved)
-                print_data_contents(dataRecieved)
+                Utils.print_data_stats(dataRecieved)
+                Utils.print_data_contents(dataRecieved)
                 quit_now (theConnection)
 
     else:
@@ -99,16 +88,16 @@ def start_here (theConnection):
         received = "Nothing recieved because nothing sent."
 
 
-
 # Create a socket (SOCK_STREAM means a TCP socket), connect to server.
 clientSocket = socket.socket(AF_INET, SOCK_STREAM)
 print_startup_msg()
+
 try:
     clientSocket.connect((HOST, PORT))
     print ("...connected.")
     print ("(please input string to echo, or integer to request file of certain number Bytes).")
-    start_here(clientSocket)
 except:
     print ("Failed to connect to server.")
     sys.exit()
 
+start_here(clientSocket)

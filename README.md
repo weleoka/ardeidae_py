@@ -1,6 +1,5 @@
-# ardeidae_py
 
-## TCP and UDP server-client pair written in Python.
+TCP and UDP server-client pair written in Python.
 
 This is for learning purposes whereby simple data packets can be sent and recieved.
 The recommended tool to complement this experiment is Wireshark.
@@ -40,10 +39,23 @@ Server default listening port: 8121
 ### Client
 Execute client as shellscript ./udpcli.py
 
+After making a request for a "file" transfer the client will wait for RcvTimeOut.
+
+If the "file" requested is particularly large the server will take quite a long time to generate it, and the server will not start sending pakets util the file is ready, this is why the client has a RcvTimeOut for waiting for a response from the server.
+
+Once a UDP paket is recieved that notifies the client that the file is ready the client switches to recieve file mode. For each paket ariving RcvTimeOut is reset.
+
+The timer on function: recv_file_with_size will include the RcvTimeOut value.
+
+
+
 
 ## Code and Notes
 * The server imports dependencies from ardei_server_utils.py and the clients from ardei_client_utils.py.
-* The servers by default do not accept requests for greater than 10 000 000 character transfers.
+* The servers by default do not accept requests for greater than 123456789 character transfers.
+
+- Fix the TCP recieve function to not loop for ever.
+
 
 ## Sources and inspiration
 http://docs.python.org/3.1/howto/sockets.html

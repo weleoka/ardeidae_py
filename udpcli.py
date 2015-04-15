@@ -74,13 +74,10 @@ def start_here (theConnection):
             quit_now()
 
         else:
-            # TIMETAKE
-            with Utils.Timer() as t:
-                theConnection.sendto(messageBytes, (HOST, PORT))
-            print ('Sending took %.03f sec.' % t.interval)
-            print ("Please wait for " + str(RcvTimeOut) + " seconds for the server response.\n..........")
+            theConnection.sendto(messageBytes, (HOST, PORT))
 
             if typedInteger:
+                print ("Please wait for " + str(RcvTimeOut) + " seconds for the server to prepare your file.\n..........")
                 # Set the timeout.
                 theConnection.settimeout(RcvTimeOut)
 
@@ -88,7 +85,7 @@ def start_here (theConnection):
                 if Utils.monitor_server_response(theConnection):
                     # TIMETAKE
                     with Utils.Timer() as t:
-                        dataRecieved = Utils.recv_file_with_size (theConnection)
+                        dataRecieved = Utils.recv_file_with_size_UDP(theConnection)
                     print ('Recieving took %.03f sec.' % t.interval)
 
                     Utils.print_file_stats(dataRecieved)
@@ -99,13 +96,10 @@ def start_here (theConnection):
                     quit_now()
 
             else:
-                # Set the timeout to 5 seconds.
-                theConnection.settimeout(RcvTimeOut)
+                # Set the timeout to 2 seconds.
+                theConnection.settimeout(2)
 
-                # TIMETAKE
-                with Utils.Timer() as t:
-                    dataRecieved, serverAddress = theConnection.recvfrom(1024)
-                print ('Recieving took %.03f sec.' % t.interval)
+                dataRecieved, serverAddress = theConnection.recvfrom(1024)
 
                 Utils.print_data_stats(dataRecieved)
                 Utils.print_data_contents(dataRecieved)
@@ -116,8 +110,8 @@ def start_here (theConnection):
         received = "Nothing recieved because nothing sent."
 
 
+# Create a socket (SOCK_DGRAM means a UDP socket).
 clientSocket = socket.socket(AF_INET, SOCK_DGRAM)
-
 print_startup_msg()
 
 start_here(clientSocket)

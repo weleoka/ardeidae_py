@@ -11,10 +11,12 @@ from ardei_utils import ardei_server_utils
 # HOST, PORT = "sweet.student.bth.se", 8121
 # HOST, PORT = "seekers.student.bth.se", 8121
 # HOST, PORT = "ardeidae.computersforpeace.net", 8121
-HOST, PORT = "192.168.1.36", 8121
-# HOST, PORT = "localhost", 8121
+# HOST, PORT = "192.168.1.36", 8121
+HOST, PORT = "localhost", 8121
 
 Utils = ardei_server_utils
+
+FileLimit = 123456789
 
 
 
@@ -36,9 +38,8 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
     """
 
     def handle(self):
-
-        # self.request is the UDP socket connected to the client
-        data = self.request[0]
+        # self.request[1] is the UDP socket connected to the client
+        data = self.request[0].strip()
         socket = self.request[1]
         recievedInteger = False
         filetosend = False
@@ -50,28 +51,34 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
             except:
                 pass
 
-            if recievedInteger and recievedInteger < 100000001:
+            if recievedInteger and recievedInteger < FileLimit:
                 tempFile = Utils.make_file(recievedInteger)
+
                 metadata = os.stat(tempFile.name)
                 print ("\nSending a file \n (", tempFile.name, ") \n size: " + str(metadata.st_size) + " bytes.")
 
                 # send confirmation message
-                confirmation = 'file_prepared'
+                confirmation = str.encode('file_prepared', 'utf-8')
 
-                if socket.sendto(confirmation.encode('utf-8'), self.client_address):
+                if socket.sendto(confirmation, self.client_address):
                     print ("confirmation sent!!!")
 
                     # Read the information from the file.
                     tempFile.seek(0)
                     buf = 1024
                     fileData = tempFile.read(buf)
-                    while (fileData):
-                        if(socket.sendto(fileData, self.client_address)):
-                            fileData = tempFile.read(buf)
+
+                    # TIMETAKE - sending file.
+                    with Utils.Timer() as t:
+                        while (fileData):
+                            if(socket.sendto(fileData, self.client_address)):
+                                fileData = tempFile.read(buf)
+                    print ('Sending took %.03f sec.' % t.interval)
+
                     tempFile.close()
 
-            elif recievedInteger and recievedInteger > 100000001:
-                print ("Server recieved request for file larger than 100 million chars. Rejected.")
+            elif recievedInteger and recievedInteger > FileLimit:
+                print ("Server recieved request for file larger than" + FileLimit + " chars. Rejected.")
 
             else:
                 timestamp = datetime.datetime.now().strftime("%I:%M%p")
@@ -97,7 +104,7 @@ if __name__ == "__main__":
         print_startup_msg()
         server.serve_forever()
     except socket.error:
-        print ('Failed to create socket. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
+        print ('Failed to create socket.')
         sys.exit()
 
 

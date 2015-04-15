@@ -16,6 +16,8 @@ HOST, PORT = "localhost", 8120
 
 Utils = ardei_server_utils
 
+FileLimit = 123456789
+
 
 
 def print_startup_msg():
@@ -32,6 +34,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
     def handle(self):
         # self.request is the TCP socket connected to the client
         data = self.request.recv(1024).strip()
+        socket = self.request
         recievedInteger = False
         filetosend = False
 
@@ -42,26 +45,34 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
             except:
                 pass
 
-            if recievedInteger and recievedInteger < 10000001:
+            if recievedInteger and recievedInteger < FileLimit:
                 tempFile = Utils.make_file(recievedInteger)
 
                 metadata = os.stat(tempFile.name)
                 print ("\nSending a file \n (", tempFile.name, ") \n size: " + str(metadata.st_size) + " bytes.")
 
                 # send confirmation message
-                confirmation = 'file_prepared'
+                confirmation = str.encode('file_prepared', 'utf-8')
 
-                if self.request.sendall(confirmation.encode('utf-8')):
+                if self.request.sendall(confirmation):
                     print ("confirmation sent.")
 
                     # Read the information from the file.
                     tempFile.seek(0)
                     buf = 1024
                     fileData = tempFile.read(buf)
-                    while (fileData):
-                        if(self.request.sendall(fileData)):
-                            fileData = tempFile.read(buf)
+
+                    # TIMETAKE - sending file.
+                    with Utils.Timer() as t:
+                        while (fileData):
+                            if(self.request.sendall(fileData)):
+                                fileData = tempFile.read(buf)
+                    print ('Sending took %.03f sec.' % t.interval)
+
                     tempFile.close()
+
+            elif recievedInteger and recievedInteger > FileLimit:
+                print ("Server recieved request for file larger than" + FileLimit + " chars. Rejected.")
 
             else:
                 timestamp = datetime.datetime.now().strftime("%I:%M%p")
@@ -82,13 +93,13 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
 if __name__ == "__main__":
     # Allow reuse of listening address.
-    socketserver.TCPServer.allow_reuse_address = True;
+    # socketserver.TCPServer.allow_reuse_address = True;
 
     try :
         server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
         print_startup_msg()
         server.serve_forever()
     except socket.error:
-        print ('Failed to create socket. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
+        print ('Failed to create socket.')
         sys.exit()
 
