@@ -64,7 +64,7 @@ def start_here (theConnection):
             streamRequest = str.encode('stream-' + str(interval) + '-' + str(pakets))
             theConnection.sendall(streamRequest)
 
-            streamData = Utils.recv_stream_TCP(theConnection)
+            streamData = Utils.recv_stream(theConnection)
             print("Recieved: " + str(len(streamData)/len(streamRequest)) + " pakets.")
 
         else:

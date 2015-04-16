@@ -23,6 +23,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         FileLimit = 123456789
         StreamServer = False
         StreamServerPaketLimit = 10000
+        delimiter = str.encode('$')
 
         # self.request is the TCP socket connected to the client
         data = self.request.recv(1024).strip()
@@ -61,8 +62,9 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                         time.sleep(txInterval)
                         socket.sendall(data)
                         txPakets = txPakets - 1
+                    socket.sendall(delimiter)
                 else:
-                    socket.sendall(data)
+                    socket.sendall(data + delimiter)
 
 
 
@@ -92,7 +94,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
             elif recievedInteger and recievedInteger > FileLimit:
                 faultReport = Utils.make_faultReport(FileLimit, recievedInteger)
-                self.request.sendall(faultReport)
+                socket.sendall(faultReport)
 
 
 

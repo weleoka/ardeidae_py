@@ -171,20 +171,36 @@ def monitor_server_response (cnct):
 
 """
 Recieve data STREAM and write to named temporary file.
+A fundamental truth of sockets: messages must either be fixed length (yuck),
+or be delimited (shrug), or indicate how long they are (much better),
+or end by shutting down the connection.
+The choice is entirely yours, (but some ways are righter than others).
 parameters:
     cnct: The connection.
 
 returns tf, temporaryfile instance.
 """
 def recv_stream(cnct):
-    msg = b''
+    msg = ''
 
     while True:
         try:
             chunk = cnct.recv(1024)
-            msg = msg + chunk
+            if chunk == '':
+                raise RuntimeError("socket connection broken")
+                return msg
+
+            chunkStr = chunk.decode('utf-8')
+            pattern = '$'
+
+            if re.search(pattern, chunkStr):
+                chunkStr = re.sub(pattern, "", chunkStr) #delete delimiter
+                msg = msg + chunkStr
+                return msg
+            else:
+                msg = msg + chunkStr
+
         except socket.timeout:
             print("Socket timed out.")
             return msg
-
     return msg
