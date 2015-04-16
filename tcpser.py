@@ -5,7 +5,7 @@ If anything other than an integer is recieved from client it will echo the strin
 After processing one request the server will shut down.
 '''
 
-import socketserver, socket, datetime, os, sys
+import socketserver, socket, sys
 from ardei_utils import ardei_server_utils
 
 # HOST, PORT = "sweet.student.bth.se", 8120
@@ -20,20 +20,12 @@ FileLimit = 123456789
 
 
 
-def print_startup_msg():
-    print (" ")
-    print("Started TCP Server... waiting for clients.")
-    print ("Server host name: ", socket.gethostname(), " on ", socket.gethostbyname(socket.gethostname()), " port: ", PORT)
-    print ("fully qualified domain name: ", socket.getfqdn())
-    print ("details: ", socket.gethostbyaddr(socket.gethostbyname(socket.gethostname())))
-
-
-
 class MyTCPHandler(socketserver.BaseRequestHandler):
 
     def handle(self):
         # self.request is the TCP socket connected to the client
         data = self.request.recv(1024).strip()
+        client_address = self.client_address[0]
         socket = self.request
         recievedInteger = False
         filetosend = False
@@ -46,16 +38,12 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                 pass
 
             if recievedInteger and recievedInteger < FileLimit:
+                # Make the temporary file and generate confiramtion message.
                 tempFile = Utils.make_file(recievedInteger)
-
-                metadata = os.stat(tempFile.name)
-                print ("\nSending a file \n (", tempFile.name, ") \n size: " + str(metadata.st_size) + " bytes.")
-
-                # send confirmation message
-                confirmation = str.encode('file_prepared', 'utf-8')
+                confirmation = Utils.make_confirmation(tempFile)
 
                 if self.request.sendall(confirmation):
-                    print ("confirmation sent.")
+                    print ("File is prepared - confirmation sent to client. Now sending file.")
 
                     # Read the information from the file.
                     tempFile.seek(0)
@@ -72,32 +60,31 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                     tempFile.close()
 
             elif recievedInteger and recievedInteger > FileLimit:
-                print ("Server recieved request for file larger than" + FileLimit + " chars. Rejected.")
+                faultReport = Utils.make_faultReport(FileLimit, recievedInteger)
+                self.request.sendall(faultReport)
 
             else:
-                timestamp = datetime.datetime.now().strftime("%I:%M%p")
-                print ("\n", timestamp, "{} wrote: ".format(self.client_address[0]))
-                print (data)
-                # just send back the same data, but upper-cased
-                self.request.sendall(data.upper())
+                echoReport = Utils.make_echoReport(data, client_address)
+                self.request.sendall(echoReport)
 
         else:
-            print ("recieved client request of absolutely nothing.")
+            Utils.print_emptyReport(client_address)
+
 
 
     def finish(self):
-        print ("Server completed the job for ", self.client_address)
-        print ("The TCP connection will be in Wait state, connect with the client again or ctrl + c to quit.")
+        Utils.print_jobDoneReport(self.client_address[0])
+        print ("The TCP connection is in Wait state, connect with the client again or ctrl + c to quit.")
 
 
 
 if __name__ == "__main__":
-    # Allow reuse of listening address.
-    # socketserver.TCPServer.allow_reuse_address = True;
+    # Allow reuse of listening address. Useful if stoping and starting alot in development.
+    socketserver.TCPServer.allow_reuse_address = True;
 
     try :
         server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
-        print_startup_msg()
+        Utils.print_startup_msg_TCP(PORT)
         server.serve_forever()
     except socket.error:
         print ('Failed to create socket.')

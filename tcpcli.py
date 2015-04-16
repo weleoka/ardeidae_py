@@ -73,7 +73,6 @@ def start_here (theConnection):
                     Utils.print_file_contents(dataRecieved, PrintFile)
 
                 else:
-                    print ("Server response delayed or missing.")
                     quit_now(theConnection)
 
             else:
@@ -84,7 +83,7 @@ def start_here (theConnection):
                 quit_now (theConnection)
 
     else:
-        print ("Nothing sent. Please input a string or integer(10 million max) to transmit.")
+        print ("Nothing sent. Please input a string or integer to transmit.")
         received = "Nothing recieved because nothing sent."
 
 

@@ -36,9 +36,12 @@ HOST, PORT = "localhost", 8121
 
 # Specify if recieved files are to be output to terminal or not.
 PrintFile = False
-# How long to wait before quitting the recieve state.
+# How long to wait for the server to generate a file.
 RcvTimeOut = 10
-
+# Default timeout for client if nothing recieved.
+RcvTimeOut_default = 2
+#Default mode is off. change to 1 to Rcv stream.
+RcvStream = False
 
 
 """
@@ -64,25 +67,32 @@ def start_here (theConnection):
     message = input('\nPROMPT: ')
     messageBytes = str.encode(message)
 
-    try:
-        typedInteger = int(message)
-    except:
-        pass
-
     if len(message) > 0:
         if str(message) == 'quit':
             quit_now()
+        elif str(message) == 'stream':
+            print("Switching server to stream mode")
+            print("Please input the paket time interval required at prompt.")
+            theConnection.sendto(messageBytes, (HOST, PORT))
+            RcvStream = True
+            start_here(theConnection)
 
         else:
-            theConnection.sendto(messageBytes, (HOST, PORT))
+            try:
+                typedInteger = int(message)
+            except:
+                pass
 
-            if typedInteger:
+            if typedInteger and RcvStream = False:
                 print ("Please wait for " + str(RcvTimeOut) + " seconds for the server to prepare your file.\n..........")
                 # Set the timeout.
                 theConnection.settimeout(RcvTimeOut)
 
                 # Wait for server to generate confirmation message
                 if Utils.monitor_server_response(theConnection):
+                    # Set the timeout to default.
+                    theConnection.settimeout(RcvTimeOut_default)
+
                     # TIMETAKE
                     with Utils.Timer() as t:
                         dataRecieved = Utils.recv_file_with_size_UDP(theConnection)
@@ -92,12 +102,17 @@ def start_here (theConnection):
                     Utils.print_file_contents(dataRecieved, PrintFile)
 
                 else:
-                    print ("Server response delayed or missing.")
                     quit_now()
 
+            elif typedInteger and RcvStream = True:
+                theConnection.sendto(messageBytes, (HOST, PORT))
+                while True:
+                    streamData = cnct.recv(1024)
+
             else:
-                # Set the timeout to 2 seconds.
-                theConnection.settimeout(2)
+                theConnection.sendto(messageBytes, (HOST, PORT))
+                # Set the timeout default.
+                theConnection.settimeout(RcvTimeOut_default)
 
                 dataRecieved, serverAddress = theConnection.recvfrom(1024)
 

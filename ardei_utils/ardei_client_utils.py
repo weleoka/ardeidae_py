@@ -42,7 +42,7 @@ def recv_file_with_size_UDP(cnct):
         try:
             chunkStr = cnct.recv(1024)
             tf.write(chunkStr)
-        except cnct.timeout:
+        except socket.timeout:
             return tf
 
     tf.flush() # Flush the write buffer to file.
@@ -160,9 +160,10 @@ def monitor_server_response (cnct):
                 print ("Server has prepared the file, recieving...")
                 return True
             else:
-                print ("No valid response recieved from server")
+                print (response)
                 return False
         except socket.timeout:
+            print ("Client timed out. Try increasing RcvTimeOut")
             return False
 
 
