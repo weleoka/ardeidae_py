@@ -140,7 +140,7 @@ parameters:
 returns void.
 """
 def print_data_contents(rd):
-    print (rd)
+    print (str(rd))
 
 
 
@@ -167,3 +167,24 @@ def monitor_server_response (cnct):
             return False
 
 
+
+
+"""
+Recieve data STREAM and write to named temporary file.
+parameters:
+    cnct: The connection.
+
+returns tf, temporaryfile instance.
+"""
+def recv_stream(cnct):
+    msg = b''
+
+    while True:
+        try:
+            chunk = cnct.recv(1024)
+            msg = msg + chunk
+        except socket.timeout:
+            print("Socket timed out.")
+            return msg
+
+    return msg

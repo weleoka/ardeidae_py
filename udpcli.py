@@ -2,10 +2,6 @@
 import socket
 from socket import AF_INET, SOCK_DGRAM
 import sys
-import time
-import tempfile
-import os
-import re
 from ardei_utils import ardei_client_utils
 Utils = ardei_client_utils
 
@@ -16,7 +12,11 @@ Valid arguments are a string or an integer. The client sends this to an ardeidae
 the server will echo back a client string, or generate a file of certain size and transmit that to client
 if the client enters a number.
 
-The server will wait for UDP packets to arrive until socket.settimeout() expires. Change this value by changing
+The client can send a request for a paket stream by typing "stream" at prompt.
+The server can send pakets at a set interval specified by client, in miliseconds.
+The server has a paket limit in it's settings.
+
+The client will wait for UDP packets to arrive until socket.settimeout() expires. Change this value by changing
 RcvTimeOut variable.
 
 Be aware of the config variables PrintFile and RcvTimeOut.
@@ -40,8 +40,7 @@ PrintFile = False
 RcvTimeOut = 10
 # Default timeout for client if nothing recieved.
 RcvTimeOut_default = 2
-#Default mode is off. change to 1 to Rcv stream.
-RcvStream = False
+
 
 
 """
@@ -62,28 +61,34 @@ def quit_now ():
 Main function
 """
 def start_here (theConnection):
-    typedInteger = False
-
     message = input('\nPROMPT: ')
     messageBytes = str.encode(message)
+    # Set the socket timeout to default.
+    theConnection.settimeout(RcvTimeOut_default)
 
     if len(message) > 0:
         if str(message) == 'quit':
             quit_now()
         elif str(message) == 'stream':
             print("Switching server to stream mode")
-            print("Please input the paket time interval required at prompt.")
-            theConnection.sendto(messageBytes, (HOST, PORT))
-            RcvStream = True
-            start_here(theConnection)
+            interval = input('\nPlease input the paket TX interval (miliseconds) required: ')
+            pakets = input('\nPlease input the number of pakets required: ')
+
+            streamRequest = str.encode('stream-' + str(interval) + '-' + str(pakets))
+            theConnection.sendto(streamRequest, (HOST, PORT))
+
+            streamData = Utils.recv_stream(theConnection)
+
+            print("Recieved: " + str(len(streamData)/len(streamRequest)) + " pakets.")
 
         else:
             try:
                 typedInteger = int(message)
             except:
+                typedInteger = False
                 pass
 
-            if typedInteger and RcvStream = False:
+            if typedInteger:
                 print ("Please wait for " + str(RcvTimeOut) + " seconds for the server to prepare your file.\n..........")
                 # Set the timeout.
                 theConnection.settimeout(RcvTimeOut)
@@ -104,11 +109,6 @@ def start_here (theConnection):
                 else:
                     quit_now()
 
-            elif typedInteger and RcvStream = True:
-                theConnection.sendto(messageBytes, (HOST, PORT))
-                while True:
-                    streamData = cnct.recv(1024)
-
             else:
                 theConnection.sendto(messageBytes, (HOST, PORT))
                 # Set the timeout default.
@@ -121,7 +121,7 @@ def start_here (theConnection):
                 quit_now ()
 
     else:
-        print ("Nothing sent. Please input a string or integer(100 million max) to transmit.")
+        print ("Nothing sent. Please input a string or integer to transmit.")
         received = "Nothing recieved because nothing sent."
 
 
