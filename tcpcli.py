@@ -42,24 +42,35 @@ def quit_now (cnct):
 Main function
 """
 def start_here (theConnection):
-    typedInteger = False
+    prompt = input('PROMPT: ')
+    promptBytes = str.encode(prompt)
 
-    message = input('PROMPT: ')
-    messageBytes = str.encode(message)
 
-    try:
-        typedInteger = int(message)
-    except:
-        pass
+    if len(prompt) > 0:
+        try:
+            typedInteger = int(prompt)
+        except:
+            typedInteger = False
+            pass
 
-    if len(message) > 0:
-        if str(message) == 'quit':
+        if str(prompt) == 'quit':
             quit_now(theConnection)
 
-        else:
-            theConnection.sendall(messageBytes)
+        elif str(prompt) == 'stream':
+            print("Switching server to stream mode")
+            interval = input('\nPlease input the paket TX interval (miliseconds) required: ')
+            pakets = input('\nPlease input the number of pakets required: ')
 
+            streamRequest = str.encode('stream-' + str(interval) + '-' + str(pakets))
+            theConnection.sendall(streamRequest)
+
+            streamData = Utils.recv_stream_TCP(theConnection)
+            print("Recieved: " + str(len(streamData)/len(streamRequest)) + " pakets.")
+
+        else:
             if typedInteger:
+                # Send the command.
+                theConnection.sendall(promptBytes)
                 print ("Please wait for " + str(RcvTimeOut) + " seconds for the server to prepare your file.\n..........")
 
                 # Wait for server to generate confirmation message
@@ -76,10 +87,13 @@ def start_here (theConnection):
                     quit_now(theConnection)
 
             else:
-                dataRecieved = theConnection.recv(1024)
+                # Send the command.
+                theConnection.sendall(promptBytes)
 
+                dataRecieved = theConnection.recv(1024)
                 Utils.print_data_stats(dataRecieved)
                 Utils.print_data_contents(dataRecieved)
+
                 quit_now (theConnection)
 
     else:

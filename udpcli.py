@@ -61,15 +61,22 @@ def quit_now ():
 Main function
 """
 def start_here (theConnection):
-    message = input('\nPROMPT: ')
-    messageBytes = str.encode(message)
+    prompt = input('\nPROMPT: ')
+    promtBytes = str.encode(prompt)
     # Set the socket timeout to default.
     theConnection.settimeout(RcvTimeOut_default)
 
-    if len(message) > 0:
-        if str(message) == 'quit':
+    if len(prompt) > 0:
+        try:
+            typedInteger = int(prompt)
+        except:
+            typedInteger = False
+            pass
+
+        if str(prompt) == 'quit':
             quit_now()
-        elif str(message) == 'stream':
+
+        elif str(prompt) == 'stream':
             print("Switching server to stream mode")
             interval = input('\nPlease input the paket TX interval (miliseconds) required: ')
             pakets = input('\nPlease input the number of pakets required: ')
@@ -78,20 +85,14 @@ def start_here (theConnection):
             theConnection.sendto(streamRequest, (HOST, PORT))
 
             streamData = Utils.recv_stream(theConnection)
-
             print("Recieved: " + str(len(streamData)/len(streamRequest)) + " pakets.")
 
         else:
-            try:
-                typedInteger = int(message)
-            except:
-                typedInteger = False
-                pass
-
             if typedInteger:
-                print ("Please wait for " + str(RcvTimeOut) + " seconds for the server to prepare your file.\n..........")
-                # Set the timeout.
+                # Set the timeout and send the command.
                 theConnection.settimeout(RcvTimeOut)
+                theConnection.sendto(promtBytes, (HOST, PORT))
+                print ("Please wait for " + str(RcvTimeOut) + " seconds for the server to prepare your file.\n..........")
 
                 # Wait for server to generate confirmation message
                 if Utils.monitor_server_response(theConnection):
@@ -110,14 +111,14 @@ def start_here (theConnection):
                     quit_now()
 
             else:
-                theConnection.sendto(messageBytes, (HOST, PORT))
-                # Set the timeout default.
+                # Set the timeout and send the command.
                 theConnection.settimeout(RcvTimeOut_default)
+                theConnection.sendto(promtBytes, (HOST, PORT))
 
-                dataRecieved, serverAddress = theConnection.recvfrom(1024)
-
+                dataRecieved = theConnection.recv(1024)
                 Utils.print_data_stats(dataRecieved)
                 Utils.print_data_contents(dataRecieved)
+
                 quit_now ()
 
     else:

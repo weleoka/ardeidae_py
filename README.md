@@ -10,6 +10,9 @@ All servers and clients call for python 3.
 ### Server
 Execute as shellscript: ./tcpser.py
 tcpser just echos back the clients command. Or if an integer is entered at the prompt then the server will generate a file of the corresponding number of characters and send that file to client.
+
+The server can be switched to stream mode and will then send a set number of pakets at a set interval.
+
 Server default listening port: 8120
 
 ### Client
@@ -33,7 +36,9 @@ Input "ls" "chdir" "dl" and "quit" commands at prompt. Any other input returns e
 ### Server
 Execute as shellscript: ./udpser.py
 The server just echo's back the clients message. Or if an integer is entered at the prompt then the server will generate a file of the corresponding number of characters and send that file to client.
-Execute as shellscript: ./udpser.py
+
+The server can be switched to stream mode and will then send a set number of pakets at a set interval.
+
 Server default listening port: 8121
 
 ### Client
@@ -43,9 +48,9 @@ After making a request for a "file" transfer the client will wait for RcvTimeOut
 
 If the "file" requested is particularly large the server will take quite a long time to generate it, and the server will not start sending pakets util the file is ready, this is why the client has a RcvTimeOut for waiting for a response from the server.
 
-Once a UDP paket is recieved that notifies the client that the file is ready the client switches to recieve file mode. For each paket ariving RcvTimeOut is reset.
+Once a UDP paket is recieved that notifies the client that the file is ready the client switches to recieve file mode.
+For each paket arriving RcvTimeOut is reset.
 
-The timer on function: recv_file_with_size will include the RcvTimeOut value.
 
 
 
@@ -54,7 +59,9 @@ The timer on function: recv_file_with_size will include the RcvTimeOut value.
 * The server imports dependencies from ardei_server_utils.py and the clients from ardei_client_utils.py.
 * The servers by default do not accept requests for greater than 123456789 character transfers.
 
-- Fix the TCP recieve function to not loop for ever.
+- TCP: Fix the recieve file/stream function to not loop for ever.
+- UDP: The timer on function: recv_file_with_size will include the RcvTimeOut value.
+
 
 
 ## Sources and inspiration

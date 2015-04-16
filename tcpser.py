@@ -5,7 +5,7 @@ If anything other than an integer is recieved from client it will echo the strin
 After processing one request the server will shut down.
 '''
 
-import socketserver, socket, sys
+import socketserver, socket, sys, re, time
 from ardei_utils import ardei_server_utils
 
 # HOST, PORT = "sweet.student.bth.se", 8120
@@ -16,33 +16,64 @@ HOST, PORT = "localhost", 8120
 
 Utils = ardei_server_utils
 
-FileLimit = 123456789
-
-
-
 class MyTCPHandler(socketserver.BaseRequestHandler):
 
     def handle(self):
+        # SETTINGS
+        FileLimit = 123456789
+        StreamServer = False
+        StreamServerPaketLimit = 10000
+
         # self.request is the TCP socket connected to the client
         data = self.request.recv(1024).strip()
+        dataStr = data.decode('utf-8')
         client_address = self.client_address[0]
         socket = self.request
-        recievedInteger = False
+
         filetosend = False
 
         if len(data) > 0:
-
             try:
                 recievedInteger = int(data)
             except:
+                recievedInteger = False
                 pass
 
+
+    ### STREAM Server handling
+            if re.search('stream', dataStr):
+                StreamServer = True
+                streamRequest = (dataStr.split("-", 2))
+                try:
+                    txInterval = int(streamRequest[1])/1000
+                    txPakets = int(streamRequest[2])
+                    print("TXinterval: " + str(txInterval) + " TXpakets: " + str(txPakets))
+                except:
+                    print ("Error in streamRequest command: " + str(streamRequest))
+                    txInterval = False
+                    txPakets = False
+                    pass
+                if txInterval:
+                    if txPakets > StreamServerPaketLimit:
+                        txPakets = StreamServerPaketLimit
+
+                    while txPakets > 0:
+                        time.sleep(txInterval)
+                        socket.sendall(data)
+                        txPakets = txPakets - 1
+                else:
+                    socket.sendall(data)
+
+
+
+    ### FILE Server handling
             if recievedInteger and recievedInteger < FileLimit:
+
                 # Make the temporary file and generate confiramtion message.
                 tempFile = Utils.make_file(recievedInteger)
                 confirmation = Utils.make_confirmation(tempFile)
 
-                if self.request.sendall(confirmation):
+                if socket.sendall(confirmation):
                     print ("File is prepared - confirmation sent to client. Now sending file.")
 
                     # Read the information from the file.
@@ -53,7 +84,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                     # TIMETAKE - sending file.
                     with Utils.Timer() as t:
                         while (fileData):
-                            if(self.request.sendall(fileData)):
+                            if(socket.sendall(fileData)):
                                 fileData = tempFile.read(buf)
                     print ('Sending took %.03f sec.' % t.interval)
 
@@ -63,10 +94,16 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                 faultReport = Utils.make_faultReport(FileLimit, recievedInteger)
                 self.request.sendall(faultReport)
 
+
+
+    ### ECHO Server handling
             else:
                 echoReport = Utils.make_echoReport(data, client_address)
                 self.request.sendall(echoReport)
 
+
+
+    ### NOTHING Server handling
         else:
             Utils.print_emptyReport(client_address)
 

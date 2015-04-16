@@ -29,17 +29,15 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
         dataStr = data.decode('utf-8')
         client_address = self.client_address
         socket = self.request[1]
-        # recievedInteger = False
+
         filetosend = False
-
-        try:
-            recievedInteger = int(dataStr)
-        except:
-            recievedInteger = False
-            pass
-
+        print("HAANDLING")
         if len(data) > 0:
-
+            try:
+                recievedInteger = int(data)
+            except:
+                recievedInteger = False
+                pass
 
 
     ### STREAM Server handling
