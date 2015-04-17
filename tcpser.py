@@ -26,10 +26,10 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         delimiter = str.encode('$')
 
         # self.request is the TCP socket connected to the client
-        data = self.request.recv(1024).strip()
+        sReq = self.request
+        data = sReq.recv(1024).strip()
         dataStr = data.decode('utf-8')
         client_address = self.client_address[0]
-        socket = self.request
 
         filetosend = False
 
@@ -60,11 +60,11 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
                     while txPakets > 0:
                         time.sleep(txInterval)
-                        socket.sendall(data)
+                        sReq.sendall(data)
                         txPakets = txPakets - 1
-                    socket.sendall(delimiter)
+                    sReq.sendall(delimiter)
                 else:
-                    socket.sendall(data + delimiter)
+                    sReq.sendall(data + delimiter)
 
 
 
@@ -74,27 +74,20 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                 # Make the temporary file and generate confiramtion message.
                 tempFile = Utils.make_file(recievedInteger)
                 confirmation = Utils.make_confirmation(tempFile)
+                sReq.sendall(confirmation)
+                print("File is prepared - confirmation sent to client. Now sending file.")
 
-                if socket.sendall(confirmation):
-                    print ("File is prepared - confirmation sent to client. Now sending file.")
-
-                    # Read the information from the file.
-                    tempFile.seek(0)
-                    buf = 1024
-                    fileData = tempFile.read(buf)
-
-                    # TIMETAKE - sending file.
-                    with Utils.Timer() as t:
-                        while (fileData):
-                            if(socket.sendall(fileData)):
-                                fileData = tempFile.read(buf)
-                    print ('Sending took %.03f sec.' % t.interval)
-
-                    tempFile.close()
+                # TIMETAKE - sending file.
+                with Utils.Timer() as t:
+                    if Utils.send_tempFile_TCP(sReq, tempFile):
+                        print("File successfully sent.")
+                    else:
+                        print("Error in sending file.")
+                print ('Sending took %.03f sec.' % t.interval)
 
             elif recievedInteger and recievedInteger > FileLimit:
                 faultReport = Utils.make_faultReport(FileLimit, recievedInteger)
-                socket.sendall(faultReport)
+                sReq.sendall(faultReport)
 
 
 
@@ -107,13 +100,13 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
     ### NOTHING Server handling
         else:
-            Utils.print_emptyReport(client_address)
+            Utils.print_emptyReport()
 
 
 
     def finish(self):
         Utils.print_jobDoneReport(self.client_address[0])
-        print ("The TCP connection is in Wait state, connect with the client again or ctrl + c to quit.")
+        print ("The TCP connection is in Wait state, ctrl + c to quit.")
 
 
 

@@ -75,6 +75,53 @@ def make_file(ri):
 
 
 """
+Send the file to connected client.
+parameters:
+    sReq: the client request instance.
+    tempFile: the temporary file instance.
+
+return boolean
+"""
+def send_tempFile_TCP(sReq, tempFile):
+    # Read the information from the file.
+    tempFile.seek(0)
+    buf = 1024
+    fileData = tempFile.read(buf)
+
+    while (fileData):
+        if(sReq.sendall(fileData)):
+            fileData = tempFile.read(buf)
+
+    tempFile.close()
+    return True
+
+
+
+"""
+Send the file to connected client.
+parameters:
+    sReq: the client request instance.
+    client_address: the remote address of the client making the request.
+    tempFile: the temporary file instance.
+
+return boolean
+"""
+def send_tempFile_UDP(sReq, client_address, tempFile):
+    # Read the information from the file.
+    tempFile.seek(0)
+    buf = 1024
+    fileData = tempFile.read(buf)
+
+    while (fileData):
+        if(sReq.sendto(fileData, client_address)):
+            fileData = tempFile.read(buf)
+
+    tempFile.close()
+    return True
+
+
+
+"""
 Make a fault report.
 parameters:
     FileLimit: global value limiting the temporary file size.

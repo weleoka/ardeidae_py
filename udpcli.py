@@ -17,13 +17,13 @@ The server can send pakets at a set interval specified by client, in miliseconds
 The server has a paket limit in it's settings.
 
 The client will wait for UDP packets to arrive until socket.settimeout() expires. Change this value by changing
-RcvTimeOut variable.
+RcvTimeOut_file variable.
 
-Be aware of the config variables PrintFile and RcvTimeOut.
+Be aware of the config variables PrintFile and RcvTimeOut_file.
 
 PrintFile: if true will attempt to output the whole file. That is a bad idea for big files.
 
-RcvTimeOut: (seconds) If requesting a large file from server it will take a while for the server to generate that file,
+RcvTimeOut_file: (seconds) If requesting a large file from server it will take a while for the server to generate that file,
 if the client times out before the file begins to be sent by the server then try increasing this value.
 
 """
@@ -37,7 +37,7 @@ HOST, PORT = "localhost", 8121
 # Specify if recieved files are to be output to terminal or not.
 PrintFile = False
 # How long to wait for the server to generate a file.
-RcvTimeOut = 10
+RcvTimeOut_file = 10
 # Default timeout for client if nothing recieved.
 RcvTimeOut_default = 2
 
@@ -90,13 +90,13 @@ def start_here (theConnection):
         else:
             if typedInteger:
                 # Set the timeout and send the command.
-                theConnection.settimeout(RcvTimeOut)
+                theConnection.settimeout(RcvTimeOut_file)
                 theConnection.sendto(promtBytes, (HOST, PORT))
-                print ("Please wait for " + str(RcvTimeOut) + " seconds for the server to prepare your file.\n..........")
 
                 # Wait for server to generate confirmation message
+                print ("Please wait for " + str(RcvTimeOut_file) + " seconds for the server to prepare your file.\n..........")
                 if Utils.monitor_server_response(theConnection):
-                    # Set the timeout to default.
+                    # Set the timeout back to default.
                     theConnection.settimeout(RcvTimeOut_default)
 
                     # TIMETAKE

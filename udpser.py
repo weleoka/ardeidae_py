@@ -25,10 +25,10 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
         StreamServerPaketLimit = 10000
 
         # self.request[1] is the UDP socket connected to the client
+        sReq = self.request[1]
         data = self.request[0].strip()
         dataStr = data.decode('utf-8')
         client_address = self.client_address
-        socket = self.request[1]
 
         filetosend = False
         print("HAANDLING")
@@ -59,10 +59,10 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 
                     while txPakets > 0:
                         time.sleep(txInterval)
-                        socket.sendto(data, client_address)
+                        sReq.sendto(data, client_address)
                         txPakets = txPakets - 1
                 else:
-                    socket.sendto(data, client_address)
+                    sReq.sendto(data, client_address)
 
 
 
@@ -72,34 +72,27 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
                 # Make the temporary file and generate confiramtion message
                 tempFile = Utils.make_file(recievedInteger)
                 confirmation = Utils.make_confirmation(tempFile)
+                sReq.sendto(confirmation, client_address)
+                print ("File is prepared - confirmation sent to client. Now sending file.")
 
-                if socket.sendto(confirmation, client_address):
-                    print ("File is prepared - confirmation sent to client. Now sending file.")
-
-                    # Read the information from the file.
-                    tempFile.seek(0)
-                    buf = 1024
-                    fileData = tempFile.read(buf)
-
-                    # TIMETAKE - sending file.
-                    with Utils.Timer() as t:
-                        while (fileData):
-                            if(socket.sendto(fileData, client_address)):
-                                fileData = tempFile.read(buf)
-                    print ('Sending took %.03f sec.' % t.interval)
-
-                    tempFile.close()
+                # TIMETAKE - sending file.
+                with Utils.Timer() as t:
+                    if Utils.send_tempFile_UDP(sReq, client_address, tempFile):
+                        print("File successfully sent.")
+                    else:
+                        print("Error in sending file.")
+                print ('Sending took %.03f sec.' % t.interval)
 
             elif recievedInteger and recievedInteger > FileLimit:
                 faultReport = Utils.make_faultReport(FileLimit, recievedInteger)
-                socket.sendto(faultReport, client_address)
+                sReq.sendto(faultReport, client_address)
 
 
 
     ### ECHO Server handling
             else:
                 echoReport = Utils.make_echoReport(data, client_address)
-                socket.sendto(echoReport, client_address)
+                sReq.sendto(echoReport, client_address)
 
 
 

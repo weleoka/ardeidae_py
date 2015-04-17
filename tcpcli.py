@@ -17,10 +17,10 @@ HOST, PORT = "localhost", 8120                                  #connect to loca
 
 # Specify if recieved files are to be output to terminal or not.
 PrintFile = False
-# How long to wait before quitting the recieve state.
-RcvTimeOut = 5
-
-
+# How long to wait for the server to generate a file.
+RcvTimeOut_file = 10
+# Default timeout for client if nothing recieved.
+RcvTimeOut_default = 2
 
 """
 Startup and quit functions.
@@ -71,9 +71,9 @@ def start_here (theConnection):
             if typedInteger:
                 # Send the command.
                 theConnection.sendall(promptBytes)
-                print ("Please wait for " + str(RcvTimeOut) + " seconds for the server to prepare your file.\n..........")
 
                 # Wait for server to generate confirmation message
+                print ("Please wait for the server to prepare your file.\n..........")
                 if Utils.monitor_server_response(theConnection):
                     # TIMETAKE
                     with Utils.Timer() as t:
