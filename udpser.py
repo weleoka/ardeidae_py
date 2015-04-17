@@ -77,10 +77,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 
                 # TIMETAKE - sending file.
                 with Utils.Timer() as t:
-                    if Utils.send_tempFile_UDP(sReq, client_address, tempFile):
-                        print("File successfully sent.")
-                    else:
-                        print("Error in sending file.")
+                    Utils.send_tempFile_UDP(sReq, client_address, tempFile)
                 print ('Sending took %.03f sec.' % t.interval)
 
             elif recievedInteger and recievedInteger > FileLimit:

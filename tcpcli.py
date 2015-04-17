@@ -77,7 +77,7 @@ def start_here (theConnection):
                 if Utils.monitor_server_response(theConnection):
                     # TIMETAKE
                     with Utils.Timer() as t:
-                        dataRecieved = Utils.recv_file_with_size_TCP(theConnection, typedInteger)
+                        dataRecieved = Utils.recv_file_with_size_TCP(theConnection)
                     print ('Recieving took %.03f sec.' % t.interval)
 
                     Utils.print_file_stats(dataRecieved)

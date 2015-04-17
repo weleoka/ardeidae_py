@@ -75,7 +75,7 @@ def make_file(ri):
 
 
 """
-Send the file to connected client.
+Send the file to connected client TCP.
 parameters:
     sReq: the client request instance.
     tempFile: the temporary file instance.
@@ -86,19 +86,20 @@ def send_tempFile_TCP(sReq, tempFile):
     # Read the information from the file.
     tempFile.seek(0)
     buf = 1024
+    toSend =b''
     fileData = tempFile.read(buf)
-
     while (fileData):
-        if(sReq.sendall(fileData)):
-            fileData = tempFile.read(buf)
+        toSend = toSend + fileData
+        fileData = tempFile.read(buf)
 
     tempFile.close()
-    return True
+    sReq.sendall(toSend)
+
 
 
 
 """
-Send the file to connected client.
+Send the file to connected client UDP.
 parameters:
     sReq: the client request instance.
     client_address: the remote address of the client making the request.
@@ -117,7 +118,6 @@ def send_tempFile_UDP(sReq, client_address, tempFile):
             fileData = tempFile.read(buf)
 
     tempFile.close()
-    return True
 
 
 

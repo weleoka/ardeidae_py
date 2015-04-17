@@ -36,21 +36,14 @@ returns tf, temporaryfile instance.
 """
 def recv_file_with_size_UDP(cnct):
     tf = tempfile.NamedTemporaryFile()
-    msg = b''
 
     while True:
         try:
-            chunkStr = cnct.recv(1024)
-            tf.write(chunkStr)
+            chunk = cnct.recv(1024)
+            tf.write(chunk)
         except socket.timeout:
+            tf.flush() # Flush the write buffer to file.
             return tf
-
-    tf.flush() # Flush the write buffer to file.
-    return tf
-
-
-
-
 
 
 
@@ -77,17 +70,17 @@ parameters:
 returns void.
 """
 def print_file_contents (rf, PrintFile):
-    buf = 10
+    buf = 1024
     i = 0
     rf.seek(0)
 
     data = rf.read(buf)
 
-    while (data):
+    while data:
         tmpstr = data.decode('utf-8')
         if PrintFile:
             print (tmpstr)
-        i += len(tmpstr)
+        i = i + len(tmpstr)
         data = rf.read(buf)
 
     print ("Total recieved: " +str(i) + " chars.")
@@ -179,40 +172,23 @@ def recv_stream(cnct):
         else:
             msg = msg + chunkStr
 
-    # return msg
-
-
 
 
 """
 TCP Recieve data and write to named temporary file.
 parameters:
     cnct: The connection.
-    size: the file size requested.
+    MSGLEN: the file size requested.
 
 returns tf, temporaryfile instance.
 """
-def recv_file_with_size_TCP(cnct, MSGLEN):
+def recv_file_with_size_TCP(cnct):
     tf = tempfile.NamedTemporaryFile()
-    msg = ''
-
     while True:
-        chunk = cnct.recv(1024)
-
-        if chunk == '':
-            print("nothing in oaket")
-            break
-            # raise RuntimeError("socket connection broken")
-
-        if len(msg) + 1 > MSGLEN:
-            print (len(msg))
-            print (MSGLEN)
-            break
-
+        chunk = cnct.recv(1024)#MSGLEN-len(msg))
         tf.write(chunk)
 
-        msg = msg + chunk.decode('utf-8')
-
-
-    tf.flush() # Flush the write buffer to file.
-    return tf
+        if chunk == b'':
+            print (chunk)
+            tf.flush()
+            return tf
