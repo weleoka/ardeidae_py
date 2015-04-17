@@ -84,7 +84,7 @@ def start_here (theConnection):
             streamRequest = str.encode('stream-' + str(interval) + '-' + str(pakets))
             theConnection.sendto(streamRequest, (HOST, PORT))
 
-            streamData = Utils.recv_stream(theConnection)
+            streamData = Utils.recv_stream_UDP(theConnection)
             print("Recieved: " + str(len(streamData)/len(streamRequest)) + " pakets.")
 
         else:
@@ -101,7 +101,7 @@ def start_here (theConnection):
 
                     # TIMETAKE
                     with Utils.Timer() as t:
-                        dataRecieved = Utils.recv_file_with_size_UDP(theConnection)
+                        dataRecieved = Utils.recv_file_UDP(theConnection)
                     print ('Recieving took %.03f sec.' % t.interval)
 
                     Utils.print_file_stats(dataRecieved)
@@ -116,8 +116,7 @@ def start_here (theConnection):
                 theConnection.sendto(promtBytes, (HOST, PORT))
 
                 dataRecieved = theConnection.recv(1024)
-                Utils.print_data_stats(dataRecieved)
-                Utils.print_data_contents(dataRecieved)
+                Utils.print_dataRecieved(dataRecieved)
 
                 quit_now ()
 

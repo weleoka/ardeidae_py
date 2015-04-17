@@ -64,8 +64,8 @@ def start_here (theConnection):
             streamRequest = str.encode('stream-' + str(interval) + '-' + str(pakets))
             theConnection.sendall(streamRequest)
 
-            streamData = Utils.recv_stream(theConnection)
-            print("Recieved: " + str(len(streamData)/len(streamRequest)) + " pakets.")
+            streamData, counter = Utils.recv_stream_TCP(theConnection)
+            print("Recieved: " + str(len(streamData)/len(streamRequest)) + " pakets (count: " + str(counter) + ").")
 
         else:
             if typedInteger:
@@ -77,7 +77,7 @@ def start_here (theConnection):
                 if Utils.monitor_server_response(theConnection):
                     # TIMETAKE
                     with Utils.Timer() as t:
-                        dataRecieved = Utils.recv_file_with_size_TCP(theConnection)
+                        dataRecieved = Utils.recv_file_TCP(theConnection)
                     print ('Recieving took %.03f sec.' % t.interval)
 
                     Utils.print_file_stats(dataRecieved)
@@ -91,8 +91,7 @@ def start_here (theConnection):
                 theConnection.sendall(promptBytes)
 
                 dataRecieved = theConnection.recv(1024)
-                Utils.print_data_stats(dataRecieved)
-                Utils.print_data_contents(dataRecieved)
+                Utils.print_dataRecieved(dataRecieved)
 
                 quit_now (theConnection)
 

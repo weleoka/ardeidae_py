@@ -21,7 +21,6 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
     def handle(self):
         # SETTINGS
         FileLimit = 123456789
-        StreamServer = False
         StreamServerPaketLimit = 10000
 
         # self.request[1] is the UDP socket connected to the client
@@ -31,7 +30,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
         client_address = self.client_address
 
         filetosend = False
-        print("HAANDLING")
+
         if len(data) > 0:
             try:
                 recievedInteger = int(data)
@@ -42,7 +41,6 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 
     ### STREAM Server handling
             if re.search('stream', dataStr):
-                StreamServer = True
                 streamRequest = (dataStr.split("-", 2))
                 try:
                     txInterval = int(streamRequest[1])/1000
@@ -62,7 +60,8 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
                         sReq.sendto(data, client_address)
                         txPakets = txPakets - 1
                 else:
-                    sReq.sendto(data, client_address)
+                    faultReport = Utils.make_faultReportStream(streamRequest[1], streamRequest[2])
+                    sReq.sendto(faultReport, client_address)
 
 
 
@@ -81,7 +80,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
                 print ('Sending took %.03f sec.' % t.interval)
 
             elif recievedInteger and recievedInteger > FileLimit:
-                faultReport = Utils.make_faultReport(FileLimit, recievedInteger)
+                faultReport = Utils.make_faultReportFile(FileLimit, recievedInteger)
                 sReq.sendto(faultReport, client_address)
 
 

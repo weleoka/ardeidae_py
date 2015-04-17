@@ -69,25 +69,14 @@ def print_file_contents (rf, PrintFile):
 
 
 """
-Output to console information about recieved data.
-parameters:
-    rd: the recieved data.
-
-returns void.
-"""
-def print_data_stats(rd):
-    print ("Received {0} bytes of data.".format(sys.getsizeof(rd)))
-
-
-
-"""
 Output to console recieved data.
 parameters:
     rd: the recieved data.
 
 returns void.
 """
-def print_data_contents(rd):
+def print_dataRecieved(rd):
+    print ("Received {0} bytes of data.".format(sys.getsizeof(rd)))
     print (str(rd))
 
 
@@ -117,13 +106,19 @@ def monitor_server_response (cnct):
 
 
 """
+======== U D P =============
+"""
+
+
+
+"""
 UDP Recieve data and write to named temporary file.
 parameters:
     cnct: The connection.
 
 returns tf, temporaryfile instance.
 """
-def recv_file_with_size_UDP(cnct):
+def recv_file_UDP(cnct):
     tf = tempfile.NamedTemporaryFile()
 
     while True:
@@ -137,6 +132,32 @@ def recv_file_with_size_UDP(cnct):
 
 
 """
+Recieve data STREAM over UDP and write to named temporary file.
+
+parameters:
+    cnct: The connection.
+
+returns tf, temporaryfile instance.
+"""
+def recv_stream_UDP(cnct):
+    msg = ''
+
+    while True:
+        try:
+            chunk = cnct.recv(1024)
+        except socket.timeout:
+            print("Socket timed out on recv_stream.")
+            return msg
+
+
+
+"""
+======== T C P =============
+"""
+
+
+
+"""
 TCP Recieve data and write to named temporary file.
 parameters:
     cnct: The connection.
@@ -144,7 +165,7 @@ parameters:
 
 returns tf, temporaryfile instance.
 """
-def recv_file_with_size_TCP(cnct):
+def recv_file_TCP(cnct):
     tf = tempfile.NamedTemporaryFile()
     while True:
         chunk = cnct.recv(1024)#MSGLEN-len(msg))
@@ -158,40 +179,24 @@ def recv_file_with_size_TCP(cnct):
 
 
 """
-Recieve data STREAM and write to named temporary file.
-A fundamental truth of sockets: messages must either be fixed length (yuck),
-or be delimited (shrug), or indicate how long they are (much better),
-or end by shutting down the connection.
-The choice is entirely yours, (but some ways are righter than others).
+Recieve data STREAM over TCP and write to named temporary file.
+
 parameters:
     cnct: The connection.
 
-returns tf, temporaryfile instance.
+returns msg, string.
+returns counter, integer.
 """
-def recv_stream(cnct):
+def recv_stream_TCP(cnct):
     msg = ''
-    delimiter = '$'
+    counter = 0
 
     while True:
-        try:
-            chunk = cnct.recv(1024)
-        except socket.timeout:
-            print("Socket timed out on recv_stream.")
-            return msg
-
-        if chunk == '':
-            raise RuntimeError("socket connection broken")
-            return msg
-
+        chunk = cnct.recv(1024)
         chunkStr = chunk.decode('utf-8')
 
-        if re.search(delimiter, chunkStr):
-            chunkStr = re.sub(delimiter, '', chunkStr) #delete delimiter
-            msg = msg + chunkStr
-            # return msg
-        else:
-            msg = msg + chunkStr
+        if chunk == b'':
+           return msg, counter
 
-
-
-
+        msg = msg + chunkStr
+        counter = counter + 1

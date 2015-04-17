@@ -72,3 +72,26 @@ The yifi people
 Computer Networking: A Top Down Approach by Kurose, Ross.
 
 
+
+
+### https://docs.python.org/3/library/socket.html
+flags: http://www.unix.com/man-page/Linux/2/recv/
+
+socket.send(bytes[, flags])
+
+    Send data to the socket. The socket must be connected to a remote socket. The optional flags argument has the same meaning as for recv() above. Returns the number of bytes sent. Applications are responsible for checking that all data has been sent; if only some of the data was transmitted, the application needs to attempt delivery of the remaining data. For further information on this topic, consult the Socket Programming HOWTO.
+
+socket.sendall(bytes[, flags])
+
+    Send data to the socket. The socket must be connected to a remote socket. The optional flags argument has the same meaning as for recv() above. Unlike send(), this method continues to send data from bytes until either all data has been sent or an error occurs. None is returned on success. On error, an exception is raised, and there is no way to determine how much data, if any, was successfully sent.
+
+socket.sendto(bytes, address)
+socket.sendto(bytes, flags, address)
+
+    Send data to the socket. The socket should not be connected to a remote socket, since the destination socket is specified by address. The optional flags argument has the same meaning as for recv() above. Return the number of bytes sent. (The format of address depends on the address family — see above.)
+
+
+A fundamental truth of sockets: messages must either be fixed length (yuck),
+or be delimited (shrug), or indicate how long they are (much better),
+or end by shutting down the connection.
+The choice is entirely yours, (but some ways are righter than others).

@@ -122,15 +122,30 @@ def send_tempFile_UDP(sReq, client_address, tempFile):
 
 
 """
-Make a fault report.
+Make a fault report FILE request.
 parameters:
     FileLimit: global value limiting the temporary file size.
     recievedInteger: the integer recieved from client.
 
 return encoded string.
 """
-def make_faultReport(FileLimit, recievedInteger):
+def make_faultReportFile(FileLimit, recievedInteger):
     feedback = "Request for file of " + str(recievedInteger) + " chars. Server limit is: " + str(FileLimit) + " chars."
+    print (feedback)
+    return str.encode(feedback, 'utf-8')
+
+
+
+"""
+Make a fault report STREAM request.
+parameters:
+    FileLimit: global value limiting the temporary file size.
+    recievedInteger: the integer recieved from client.
+
+return encoded string.
+"""
+def make_faultReportStream(txInterval, txPakets):
+    feedback = "Request for transfer of " + str(txPakets) + " pakets at: " + str(txInterval) + " has errors."
     print (feedback)
     return str.encode(feedback, 'utf-8')
 
