@@ -28,26 +28,6 @@ class Timer:
 
 
 """
-UDP Recieve data and write to named temporary file.
-parameters:
-    cnct: The connection.
-
-returns tf, temporaryfile instance.
-"""
-def recv_file_with_size_UDP(cnct):
-    tf = tempfile.NamedTemporaryFile()
-
-    while True:
-        try:
-            chunk = cnct.recv(1024)
-            tf.write(chunk)
-        except socket.timeout:
-            tf.flush() # Flush the write buffer to file.
-            return tf
-
-
-
-"""
 Output to console file stats.
 parameters:
     rf: the recieved file.
@@ -128,12 +108,52 @@ def monitor_server_response (cnct):
                 print ("Server has prepared the file, recieving...")
                 return True
             else:
-                print (response)
+                print (str(response))
                 return False
         except socket.timeout:
             print ("Client timed out. Try increasing RcvTimeOut")
             return False
 
+
+
+"""
+UDP Recieve data and write to named temporary file.
+parameters:
+    cnct: The connection.
+
+returns tf, temporaryfile instance.
+"""
+def recv_file_with_size_UDP(cnct):
+    tf = tempfile.NamedTemporaryFile()
+
+    while True:
+        try:
+            chunk = cnct.recv(1024)
+            tf.write(chunk)
+        except socket.timeout:
+            tf.flush() # Flush the write buffer to file.
+            return tf
+
+
+
+"""
+TCP Recieve data and write to named temporary file.
+parameters:
+    cnct: The connection.
+    MSGLEN: the file size requested.
+
+returns tf, temporaryfile instance.
+"""
+def recv_file_with_size_TCP(cnct):
+    tf = tempfile.NamedTemporaryFile()
+    while True:
+        chunk = cnct.recv(1024)#MSGLEN-len(msg))
+        tf.write(chunk)
+
+        if chunk == b'':
+            print (chunk)
+            tf.flush()
+            return tf
 
 
 
@@ -174,21 +194,4 @@ def recv_stream(cnct):
 
 
 
-"""
-TCP Recieve data and write to named temporary file.
-parameters:
-    cnct: The connection.
-    MSGLEN: the file size requested.
 
-returns tf, temporaryfile instance.
-"""
-def recv_file_with_size_TCP(cnct):
-    tf = tempfile.NamedTemporaryFile()
-    while True:
-        chunk = cnct.recv(1024)#MSGLEN-len(msg))
-        tf.write(chunk)
-
-        if chunk == b'':
-            print (chunk)
-            tf.flush()
-            return tf

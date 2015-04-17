@@ -70,7 +70,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
             elif recievedInteger and recievedInteger < FileLimit:
                 print ("detected integer")
                 # Make the temporary file and generate confiramtion message
-                tempFile = Utils.make_file(recievedInteger)
+                tempFile = Utils.make_tempFile(recievedInteger)
                 confirmation = Utils.make_confirmation(tempFile)
                 sReq.sendto(confirmation, client_address)
                 print ("File is prepared - confirmation sent to client. Now sending file.")

@@ -62,7 +62,7 @@ parameters:
 
 return temporaryfile instance.
 """
-def make_file(ri):
+def make_tempFile(ri):
     tf = tempfile.NamedTemporaryFile()
     chunkStr = 'A'
     for x in range(0, ri):

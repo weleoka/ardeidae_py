@@ -69,22 +69,23 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
 
     ### FILE Server handling
-            if recievedInteger and recievedInteger < FileLimit:
-
+            if recievedInteger:
                 # Make the temporary file and generate confiramtion message.
-                tempFile = Utils.make_file(recievedInteger)
-                confirmation = Utils.make_confirmation(tempFile)
-                sReq.sendall(confirmation)
-                print("File is prepared - confirmation sent to client. Now sending file.")
+                if recievedInteger < FileLimit:
+                    tempFile = Utils.make_tempFile(recievedInteger)
+                    confirmation = Utils.make_confirmation(tempFile)
+                    sReq.sendall(confirmation)
+                    print("File is prepared - confirmation sent to client. Now sending file.")
 
-                # TIMETAKE - sending file.
-                with Utils.Timer() as t:
-                    Utils.send_tempFile_TCP(sReq, tempFile)
-                print ('Sending took %.03f sec.' % t.interval)
+                    # TIMETAKE - sending file.
+                    with Utils.Timer() as t:
+                        Utils.send_tempFile_TCP(sReq, tempFile)
+                    print ('Sending took %.03f sec.' % t.interval)
 
-            elif recievedInteger and recievedInteger > FileLimit:
-                faultReport = Utils.make_faultReport(FileLimit, recievedInteger)
-                sReq.sendall(faultReport)
+                # Make an error report and send to client.
+                elif recievedInteger > FileLimit:
+                    faultReport = Utils.make_faultReport(FileLimit, recievedInteger)
+                    sReq.sendall(faultReport)
 
 
 
