@@ -101,6 +101,8 @@ def start_here (theConnection):
         received = "Nothing recieved because nothing sent."
 
 
+HOST, PORT = Utils.select_host()
+
 # Create a socket (SOCK_STREAM means a TCP socket), connect to server.
 clientSocket = socket.socket(AF_INET, SOCK_STREAM)
 print_startup_msg()

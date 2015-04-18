@@ -28,6 +28,51 @@ class Timer:
 
 
 """
+Select a host and port connect to.
+
+If no or invalid integer is entered at the prompt the default host at index 0 is selected.
+
+parameters:
+    none
+
+return:
+    host: string.
+    port: integer.
+
+"""
+def select_host():
+    print("Choose server please:")
+    fh = open( "hosts.txt" );
+
+    listHosts = []
+    for line in fh.readlines():
+        y = [value for value in line.split()]
+        listHosts.append( y )
+
+    fh.close()
+
+    for index, item in enumerate(listHosts):
+        print (index, item)
+
+    prompt = input('PROMPT: ')
+
+    try:
+        typedInteger = int(prompt)
+    except:
+        typedInteger = 0
+        print ("Default server selected.")
+        pass
+
+    selectedHost = listHosts[typedInteger]
+    print (selectedHost)
+    for item in selectedHost:
+        hostString = item.split(":", 1)
+
+    return str(hostString[0]), int(hostString[1])
+
+
+
+"""
 Output to console file stats.
 parameters:
     rf: the recieved file.
@@ -241,6 +286,6 @@ return:
 """
 def quit_now_TCP(cnct):
     cnct.close()
-    print ("...disconnected from ", HOST)
+    print ("...disconnected.")
     print ("Shutting down client...")
     sys.exit()

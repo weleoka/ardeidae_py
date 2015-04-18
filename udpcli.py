@@ -133,6 +133,7 @@ def start_here (theConnection):
         received = "Nothing recieved because nothing sent."
 
 
+HOST, PORT = Utils.select_host()
 
 # Create a socket (SOCK_DGRAM means a UDP socket).
 clientSocket = socket.socket(AF_INET, SOCK_DGRAM)

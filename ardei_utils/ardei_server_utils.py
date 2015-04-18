@@ -24,6 +24,51 @@ class Timer:
 
 
 """
+Select a host and port to bind to.
+
+If no or invalid integer is entered at the prompt the default host at index 0 is selected.
+
+parameters:
+    none
+
+return:
+    host: string.
+    port: integer.
+
+"""
+def select_host():
+    print("Choose host and port to bind to please: ")
+    fh = open( "hosts.txt" );
+
+    listHosts = []
+    for line in fh.readlines():
+        y = [value for value in line.split()]
+        listHosts.append( y )
+
+    fh.close()
+
+    for index, item in enumerate(listHosts):
+        print (index, item)
+
+    prompt = input('PROMPT: ')
+
+    try:
+        typedInteger = int(prompt)
+    except:
+        typedInteger = 0
+        print ("Default server selected.")
+        pass
+
+    selectedHost = listHosts[typedInteger]
+    print (selectedHost)
+    for item in selectedHost:
+        hostString = item.split(":", 1)
+
+    return str(hostString[0]), int(hostString[1])
+
+
+
+"""
 Make a named temporary file and fill it with chars.
 
 parameters:
@@ -142,7 +187,8 @@ parameters:
     txPakets: integer, the number of packets to send.
     data: bytes object, the data to include in each packet.
 
-return void
+return:
+    void
 """
 def send_stream_TCP(sReq, txInterval, txPakets, data):
     while txPakets > 1:
@@ -159,7 +205,8 @@ parameters:
     sReq: the client request instance.
     tempFile: the temporary file instance.
 
-return boolean
+return:
+    boolean
 """
 def send_tempFile_TCP(sReq, tempFile):
     # Read the information from the file.

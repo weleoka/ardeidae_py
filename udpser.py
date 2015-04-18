@@ -8,12 +8,6 @@ After processing one request the server will shut down.
 import socketserver, socket, sys, re, time
 from ardei_utils import ardei_server_utils
 
-# HOST, PORT = "sweet.student.bth.se", 8121
-# HOST, PORT = "seekers.student.bth.se", 8121
-# HOST, PORT = "ardeidae.computersforpeace.net", 8121
-# HOST, PORT = "192.168.1.36", 8121
-HOST, PORT = "localhost", 8121
-
 Utils = ardei_server_utils
 
 class MyUDPHandler(socketserver.BaseRequestHandler):
@@ -109,6 +103,8 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 
 
 if __name__ == "__main__":
+
+    HOST, PORT = Utils.select_host()
 
     try :
         server = socketserver.UDPServer((HOST, PORT), MyUDPHandler)

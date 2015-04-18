@@ -12,6 +12,8 @@ Commands are "quit", "stream", integer or string on the prompt. Stream swithes t
 
 Be aware of the config variable PrintFile, if true will attempt to output the whole file to console of client
 
+The servers need to bind to a host and port. These are listed in hosts.txt. The first item is the default host/port which makes starting that easier by just hitting enter at the prompt.
+
 #### Stream
 The client can send a request for a paket stream by typing "stream" at prompt. The servers can send pakets at a set interval specified by client, in miliseconds. The servers have a paket limit in their settings.
 

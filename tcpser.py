@@ -8,12 +8,6 @@ After processing one request the server will shut down.
 import socketserver, socket, sys, re, time
 from ardei_utils import ardei_server_utils
 
-# HOST, PORT = "sweet.student.bth.se", 8120
-# HOST, PORT = "seekers.student.bth.se", 8120
-# HOST, PORT = "ardeidae.computersforpeace.net", 8120
-# HOST, PORT = "192.168.1.36", 8120
-HOST, PORT = "localhost", 8120
-
 Utils = ardei_server_utils
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
@@ -112,6 +106,8 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 if __name__ == "__main__":
     # Allow reuse of listening address. Useful if stoping and starting alot in development.
     socketserver.TCPServer.allow_reuse_address = True;
+
+    HOST, PORT = Utils.select_host()
 
     try :
         server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
