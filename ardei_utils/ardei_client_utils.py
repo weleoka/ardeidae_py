@@ -32,7 +32,8 @@ Output to console file stats.
 parameters:
     rf: the recieved file.
 
-returns void.
+return:
+    void.
 """
 def print_file_stats (rf):
     metadata = os.stat(rf.name)
@@ -47,7 +48,8 @@ parameters:
     rf: the recieved file.
     PrintFile: the settings parameter.
 
-returns void.
+return:
+    void.
 """
 def print_file_contents (rf, PrintFile):
     buf = 1024
@@ -73,7 +75,8 @@ Output to console recieved data.
 parameters:
     rd: the recieved data.
 
-returns void.
+return:
+    void.
 """
 def print_dataRecieved(rd):
     print ("Received {0} bytes of data.".format(sys.getsizeof(rd)))
@@ -86,7 +89,8 @@ Decide what to do after a response from server.
 parameters:
     cnct: The connection.
 
-returns boolean.
+return:
+    boolean.
 """
 def monitor_server_response (cnct):
     while True:
@@ -105,6 +109,9 @@ def monitor_server_response (cnct):
 
 
 
+
+
+
 """
 ======== U D P =============
 """
@@ -116,7 +123,8 @@ UDP Recieve data and write to named temporary file.
 parameters:
     cnct: The connection.
 
-returns tf, temporaryfile instance.
+return:
+    tf: temporaryfile instance.
 """
 def recv_file_UDP(cnct):
     tf = tempfile.NamedTemporaryFile()
@@ -137,7 +145,8 @@ Recieve data STREAM over UDP and write to named temporary file.
 parameters:
     cnct: The connection.
 
-returns tf, temporaryfile instance.
+return:
+    tf: temporaryfile instance.
 """
 def recv_stream_UDP(cnct):
     msg = ''
@@ -152,6 +161,24 @@ def recv_stream_UDP(cnct):
 
 
 """
+Quit the client UDP.
+
+parameters:
+    cnct: The connection.
+
+return:
+    void
+"""
+def quit_now_UDP ():
+    print ("Shutting down client...")
+    sys.exit()
+
+
+
+
+
+
+"""
 ======== T C P =============
 """
 
@@ -161,9 +188,9 @@ def recv_stream_UDP(cnct):
 TCP Recieve data and write to named temporary file.
 parameters:
     cnct: The connection.
-    MSGLEN: the file size requested.
 
-returns tf, temporaryfile instance.
+return:
+    tf: temporaryfile instance.
 """
 def recv_file_TCP(cnct):
     tf = tempfile.NamedTemporaryFile()
@@ -172,7 +199,6 @@ def recv_file_TCP(cnct):
         tf.write(chunk)
 
         if chunk == b'':
-            print (chunk)
             tf.flush()
             return tf
 
@@ -184,8 +210,9 @@ Recieve data STREAM over TCP and write to named temporary file.
 parameters:
     cnct: The connection.
 
-returns msg, string.
-returns counter, integer.
+return:
+    msg: string. The recieved data.
+    counter: integer. The number of iterations of the loop.
 """
 def recv_stream_TCP(cnct):
     msg = ''
@@ -200,3 +227,20 @@ def recv_stream_TCP(cnct):
 
         msg = msg + chunkStr
         counter = counter + 1
+
+
+
+"""
+Quit the client TCP.
+
+parameters:
+    cnct: The connection.
+
+return:
+    void
+"""
+def quit_now_TCP(cnct):
+    cnct.close()
+    print ("...disconnected from ", HOST)
+    print ("Shutting down client...")
+    sys.exit()

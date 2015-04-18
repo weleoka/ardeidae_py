@@ -39,6 +39,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
                 pass
 
 
+
     ### STREAM Server handling
             if re.search('stream', dataStr):
                 streamRequest = (dataStr.split("-", 2))
@@ -51,14 +52,16 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
                     txInterval = False
                     txPakets = False
                     pass
+
                 if txInterval:
                     if txPakets > StreamServerPaketLimit:
                         txPakets = StreamServerPaketLimit
 
-                    while txPakets > 0:
-                        time.sleep(txInterval)
-                        sReq.sendto(data, client_address)
-                        txPakets = txPakets - 1
+                    # TIMETAKE - sending stream.
+                    with Utils.Timer() as t:
+                        Utils.send_stream_UDP(sReq, txInterval, txPakets, data)
+                    print ('Sending stream took %.03f sec.' % t.interval)
+
                 else:
                     faultReport = Utils.make_faultReportStream(streamRequest[1], streamRequest[2])
                     sReq.sendto(faultReport, client_address)
@@ -66,22 +69,24 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 
 
     ### FILE Server handling
-            elif recievedInteger and recievedInteger < FileLimit:
-                print ("detected integer")
-                # Make the temporary file and generate confiramtion message
-                tempFile = Utils.make_tempFile(recievedInteger)
-                confirmation = Utils.make_confirmation(tempFile)
-                sReq.sendto(confirmation, client_address)
-                print ("File is prepared - confirmation sent to client. Now sending file.")
+            elif recievedInteger:
+                # Make the temporary file and generate confiramtion message.
+                if recievedInteger < FileLimit:
+                    print("\nMaking tempFile of " + str(recievedInteger) + " characters...")
+                    tempFile = Utils.make_tempFile(recievedInteger)
+                    print("File is prepared - confirmation sent to client. Now sending file.")
+                    confirmation = Utils.make_confirmationReport(tempFile)
+                    sReq.sendto(confirmation, client_address)
 
-                # TIMETAKE - sending file.
-                with Utils.Timer() as t:
-                    Utils.send_tempFile_UDP(sReq, client_address, tempFile)
-                print ('Sending took %.03f sec.' % t.interval)
+                    # TIMETAKE - sending file.
+                    with Utils.Timer() as t:
+                        Utils.send_tempFile_UDP(sReq, client_address, tempFile)
+                    print('Sending took %.03f sec.' % t.interval)
 
-            elif recievedInteger and recievedInteger > FileLimit:
-                faultReport = Utils.make_faultReportFile(FileLimit, recievedInteger)
-                sReq.sendto(faultReport, client_address)
+                # Make an error report and send to client.
+                elif recievedInteger > FileLimit:
+                    faultReport = Utils.make_faultReportFile(FileLimit, recievedInteger)
+                    sReq.sendto(faultReport, client_address)
 
 
 

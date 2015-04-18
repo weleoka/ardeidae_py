@@ -5,8 +5,6 @@ import sys
 from ardei_utils import ardei_client_utils
 Utils = ardei_client_utils
 
-
-
 # HOST, PORT = "sweet.student.bth.se", 8120               #connect to bth, port
 # HOST, PORT = "seekers.student.bth.se", 8120            #connect to bth, port
 # HOST, PORT = "192.168.1.36", 8120                           #connect to localhost, port
@@ -17,24 +15,15 @@ HOST, PORT = "localhost", 8120                                  #connect to loca
 
 # Specify if recieved files are to be output to terminal or not.
 PrintFile = False
-# How long to wait for the server to generate a file.
-RcvTimeOut_file = 10
-# Default timeout for client if nothing recieved.
-RcvTimeOut_default = 2
+
 
 """
-Startup and quit functions.
+Startup function.
 """
 def print_startup_msg():
     print (" ")
     print ("Started ardeidae_py TCP client.")
     print ("Trying to connect to TCP server: ", HOST, " on port: ", PORT, "...wait.")
-
-def quit_now (cnct):
-    cnct.close()
-    print ("...disconnected from ", HOST)
-    print ("Shutting down client...")
-    sys.exit()
 
 
 
@@ -45,7 +34,6 @@ def start_here (theConnection):
     prompt = input('PROMPT: ')
     promptBytes = str.encode(prompt)
 
-
     if len(prompt) > 0:
         try:
             typedInteger = int(prompt)
@@ -53,9 +41,15 @@ def start_here (theConnection):
             typedInteger = False
             pass
 
-        if str(prompt) == 'quit':
-            quit_now(theConnection)
 
+
+    ### QUIT Request
+        if str(prompt) == 'quit':
+            Utils.quit_now_TCP(theConnection)
+
+
+
+    ### STREAM Request
         elif str(prompt) == 'stream':
             print("Switching server to stream mode")
             interval = input('\nPlease input the paket TX interval (miliseconds) required: ')
@@ -67,6 +61,9 @@ def start_here (theConnection):
             streamData, counter = Utils.recv_stream_TCP(theConnection)
             print("Recieved: " + str(len(streamData)/len(streamRequest)) + " pakets (count: " + str(counter) + ").")
 
+
+
+    ### FILE Request
         else:
             if typedInteger:
                 # Send the command.
@@ -75,17 +72,18 @@ def start_here (theConnection):
                 # Wait for server to generate confirmation message
                 print ("Please wait for the server to prepare your file.\n..........")
                 if Utils.monitor_server_response(theConnection):
-                    # TIMETAKE
-                    with Utils.Timer() as t:
-                        dataRecieved = Utils.recv_file_TCP(theConnection)
-                    print ('Recieving took %.03f sec.' % t.interval)
+
+                    dataRecieved = Utils.recv_file_TCP(theConnection)
 
                     Utils.print_file_stats(dataRecieved)
                     Utils.print_file_contents(dataRecieved, PrintFile)
 
                 else:
-                    quit_now(theConnection)
+                    Utils.quit_now_TCP(theConnection)
 
+
+
+    ### ECHO message request
             else:
                 # Send the command.
                 theConnection.sendall(promptBytes)
@@ -93,8 +91,11 @@ def start_here (theConnection):
                 dataRecieved = theConnection.recv(1024)
                 Utils.print_dataRecieved(dataRecieved)
 
-                quit_now (theConnection)
+                Utils.quit_now_TCP (theConnection)
 
+
+
+    ### NOTHING Request
     else:
         print ("Nothing sent. Please input a string or integer to transmit.")
         received = "Nothing recieved because nothing sent."

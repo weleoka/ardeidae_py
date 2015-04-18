@@ -24,7 +24,35 @@ class Timer:
 
 
 """
+Make a named temporary file and fill it with chars.
+
+parameters:
+    ri: The recieved integer from client.
+
+return tf: temporaryfile instance.
+"""
+def make_tempFile(ri):
+    tf = tempfile.NamedTemporaryFile()
+    chunkStr = 'A'
+    for x in range(0, ri):
+        chunk = chunkStr.encode('utf-8')
+        tf.write(chunk)
+
+    tf.flush() # Flush the write buffer to file.
+    return tf
+
+
+
+
+"""
+======== U D P =============
+"""
+
+
+
+"""
 Print out the UDP server welcome screen.
+
 parameters:
     port: The assigned port number.
 
@@ -40,66 +68,27 @@ def print_startup_msg_UDP(port):
 
 
 """
-Print out the TCP server welcome screen.
+Send a stream to client UDP.
+
 parameters:
-    port: The assigned port number.
+    sReq: the client request instance.
+    txInterval: integer, the second delay between sending.
+    txPakets: integer, the number of packets to send.
+    data: bytes object, the data to include in each packet.
 
 return void
 """
-def print_startup_msg_TCP(port):
-    print (" ")
-    print("Started TCP Server... waiting for clients.")
-    print ("Server host name: ", socket.gethostname(), " on ", socket.gethostbyname(socket.gethostname()), " port: ", port)
-    print ("fully qualified domain name: ", socket.getfqdn())
-    print ("details: ", socket.gethostbyaddr(socket.gethostbyname(socket.gethostname())))
+def send_stream_UDP(sReq, txInterval, txPakets, data):
+    while txPakets > 1:
+        time.sleep(txInterval)
+        sReq.sendto(data)
+        txPakets = txPakets - 1
 
 
 
 """
-Make a named temporary file and fill it with chars.
-parameters:
-    ri: The recieved integer from client.
+Send file to connected client UDP.
 
-return temporaryfile instance.
-"""
-def make_tempFile(ri):
-    tf = tempfile.NamedTemporaryFile()
-    chunkStr = 'A'
-    for x in range(0, ri):
-        chunk = chunkStr.encode('utf-8')
-        tf.write(chunk)
-
-    tf.flush() # Flush the write buffer to file.
-    return tf
-
-
-
-"""
-Send the file to connected client TCP.
-parameters:
-    sReq: the client request instance.
-    tempFile: the temporary file instance.
-
-return boolean
-"""
-def send_tempFile_TCP(sReq, tempFile):
-    # Read the information from the file.
-    tempFile.seek(0)
-    buf = 1024
-    toSend =b''
-    fileData = tempFile.read(buf)
-    while (fileData):
-        toSend = toSend + fileData
-        fileData = tempFile.read(buf)
-
-    tempFile.close()
-    sReq.sendall(toSend)
-
-
-
-
-"""
-Send the file to connected client UDP.
 parameters:
     sReq: the client request instance.
     client_address: the remote address of the client making the request.
@@ -122,7 +111,96 @@ def send_tempFile_UDP(sReq, client_address, tempFile):
 
 
 """
-Make a fault report FILE request.
+======== T C P =============
+"""
+
+
+
+"""
+Print out the TCP server welcome screen.
+
+parameters:
+    port: The assigned port number.
+
+return void
+"""
+def print_startup_msg_TCP(port):
+    print (" ")
+    print("Started TCP Server... waiting for clients.")
+    print ("Server host name: ", socket.gethostname(), " on ", socket.gethostbyname(socket.gethostname()), " port: ", port)
+    print ("fully qualified domain name: ", socket.getfqdn())
+    print ("details: ", socket.gethostbyaddr(socket.gethostbyname(socket.gethostname())))
+
+
+
+"""
+Send a stream to connected client TCP.
+
+parameters:
+    sReq: the client request instance.
+    txInterval: integer, the second delay between sending.
+    txPakets: integer, the number of packets to send.
+    data: bytes object, the data to include in each packet.
+
+return void
+"""
+def send_stream_TCP(sReq, txInterval, txPakets, data):
+    while txPakets > 1:
+        time.sleep(txInterval)
+        sReq.send(data)
+        txPakets = txPakets - 1
+
+
+
+"""
+Send a file to connected client TCP.
+
+parameters:
+    sReq: the client request instance.
+    tempFile: the temporary file instance.
+
+return boolean
+"""
+def send_tempFile_TCP(sReq, tempFile):
+    # Read the information from the file.
+    tempFile.seek(0)
+    buf = 1024
+    toSend =b''
+    fileData = tempFile.read(buf)
+    while (fileData):
+        toSend = toSend + fileData
+        fileData = tempFile.read(buf)
+
+    tempFile.close()
+    sReq.sendall(toSend)
+
+
+
+"""
+======== F E E D B A C K =============
+"""
+
+
+
+"""
+Make a file prepared confirmation.
+
+parameters:
+    tempFile: the temp file instance.
+
+return encoded confirmation message.
+"""
+def make_confirmationReport(tempFile):
+    metadata = os.stat(tempFile.name)
+    print ("\nSending file \n (", tempFile.name, ") \n size: " + str(metadata.st_size) + " bytes.")
+
+    return str.encode('file_prepared', 'utf-8')
+
+
+
+"""
+Make a fault report for FILE request.
+
 parameters:
     FileLimit: global value limiting the temporary file size.
     recievedInteger: the integer recieved from client.
@@ -137,7 +215,8 @@ def make_faultReportFile(FileLimit, recievedInteger):
 
 
 """
-Make a fault report STREAM request.
+Make a fault report for STREAM request.
+
 parameters:
     FileLimit: global value limiting the temporary file size.
     recievedInteger: the integer recieved from client.
@@ -153,7 +232,8 @@ def make_faultReportStream(txInterval, txPakets):
 
 """
 Make an echo report.
-Transform the recieved string to upper case.
+This function will take the recieved string, transform it to uppercase and return to client.
+
 parameters:
     date: the recieved data.
     client_address: the address from which the data was recieved.
@@ -165,22 +245,6 @@ def make_echoReport(data, client_address):
     print ("\n", timestamp, "{} wrote: ".format(client_address))
     print (data)
     return data.upper()
-
-
-
-"""
-Make a file prepared confirmation.
-
-parameters:
-    tempFile: the temp file instance.
-
-return encoded confirmation message.
-"""
-def make_confirmation(tempFile):
-    metadata = os.stat(tempFile.name)
-    print ("\nSending a file \n (", tempFile.name, ") \n size: " + str(metadata.st_size) + " bytes.")
-
-    return str.encode('file_prepared', 'utf-8')
 
 
 

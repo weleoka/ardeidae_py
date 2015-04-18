@@ -44,16 +44,12 @@ RcvTimeOut_default = 2
 
 
 """
-Startup and quit functions.
+Startup function.
 """
 def print_startup_msg():
     print (" ")
     print ("Started ardeidae_py UDP client.")
     print ("The client will try to connect to UDP server: ", HOST, " on port: ", PORT, " if you send anything.")
-
-def quit_now ():
-    print ("Shutting down client...")
-    sys.exit()
 
 
 
@@ -73,9 +69,15 @@ def start_here (theConnection):
             typedInteger = False
             pass
 
-        if str(prompt) == 'quit':
-            quit_now()
 
+
+    ### QUIT Request
+        if str(prompt) == 'quit':
+            Utils.quit_now_UDP()
+
+
+
+    ### STREAM Request
         elif str(prompt) == 'stream':
             print("Switching server to stream mode")
             interval = input('\nPlease input the paket TX interval (miliseconds) required: ')
@@ -87,6 +89,9 @@ def start_here (theConnection):
             streamData = Utils.recv_stream_UDP(theConnection)
             print("Recieved: " + str(len(streamData)/len(streamRequest)) + " pakets.")
 
+
+
+    ### FILE Request
         else:
             if typedInteger:
                 # Set the timeout and send the command.
@@ -99,17 +104,17 @@ def start_here (theConnection):
                     # Set the timeout back to default.
                     theConnection.settimeout(RcvTimeOut_default)
 
-                    # TIMETAKE
-                    with Utils.Timer() as t:
-                        dataRecieved = Utils.recv_file_UDP(theConnection)
-                    print ('Recieving took %.03f sec.' % t.interval)
+                    dataRecieved = Utils.recv_file_UDP(theConnection)
 
                     Utils.print_file_stats(dataRecieved)
                     Utils.print_file_contents(dataRecieved, PrintFile)
 
                 else:
-                    quit_now()
+                    Utils.quit_now_UDP()
 
+
+
+    ### ECHO message request
             else:
                 # Set the timeout and send the command.
                 theConnection.settimeout(RcvTimeOut_default)
@@ -118,11 +123,15 @@ def start_here (theConnection):
                 dataRecieved = theConnection.recv(1024)
                 Utils.print_dataRecieved(dataRecieved)
 
-                quit_now ()
+                Utils.quit_now_UDP ()
 
+
+
+    ### NOTHING Request
     else:
         print ("Nothing sent. Please input a string or integer to transmit.")
         received = "Nothing recieved because nothing sent."
+
 
 
 # Create a socket (SOCK_DGRAM means a UDP socket).

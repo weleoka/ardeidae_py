@@ -1,66 +1,35 @@
 
 TCP and UDP server-client pair written in Python.
 
-This is for learning purposes whereby simple data packets can be sent and recieved.
+This is for learning purposes whereby data packets can be sent and recieved.
 The recommended tool to complement this experiment is Wireshark.
 
 All servers and clients call for python 3.
 
-## TCP
-### Server
-Execute as shellscript: ./tcpser.py
 
-tcpser will echo back the clients command. If an integer is recieved by the server then a file of the coresponding number of characters will be generated and sent to the client.
+## Usage
+Commands are "quit", "stream", integer or string on the prompt. Stream swithes to streaming mode. Integer request file, string requests an echo from server.
 
-The server can be switched to stream mode and will then send a set number of pakets at a set interval.
+Be aware of the config variable PrintFile, if true will attempt to output the whole file to console of client
 
-Server default listening port: 8120
+#### Stream
+The client can send a request for a paket stream by typing "stream" at prompt. The servers can send pakets at a set interval specified by client, in miliseconds. The servers have a paket limit in their settings.
 
-### Client
-Execute client as shellscript ./tcpcli.py
-
-After making a request for a "file" transfer the client will wait for a confirmation from the server.
-
-If the "file" requested is particularly large the server will take quite a long time to generate it, and the server will not start sending pakets util the file is ready, and after notifying the client of this fact.
-
-Once a packet is recieved that notifies the client that the file is ready the client switches to recieve mode.
-
-Commands are "quit" or "stream" on the prompt. Stream swithes to streaming mode.
-
-### Advanced Client/Server  TCP:
-Look in the client code for HOST, PORT variable and change the values so that they correspond with the server which you are trying to connect to.
-
-
-Input "ls" "chdir" "dl" and "quit" commands at prompt. Any other input returns echo.
-
-* ls: requests and displays current working directory and all it's contents from the server
-* chdir: changes current working directory of the server (args: the directory to change to)
-* dl: downloads file (args: the file name to download)
-* quit: disconnects from server and closes socket
-
-
-
-
-## UDP
-### Server
-Execute as shellscript: ./udpser.py
-
-The server just echo's back the clients message. Or if an integer is entered at the prompt then the server will generate a file of the corresponding number of characters and send that file to client.
-
-The server can be switched to stream mode and will then send a set number of pakets at a set interval.
-
-Server default listening port: 8121
-
-### Client
-Execute client as shellscript ./udpcli.py
+#### File
+Servers will echo back the clients command, however if an integer is recieved by the server then a file of the coresponding number of characters will be generated and sent to the client.
 
 After making a request for a "file" transfer the client will wait for a confirmation from the server.
 
-If the "file" requested is particularly large the server will take quite a long time to generate it, and the server will not start sending pakets util the file is ready, and after notifying the client of this fact.
+If the file requested is particularly large the server will take quite a long time to generate it, and the server will not start sending pakets util the file is ready, and after notifying the client of this fact.
 
 Once a packet is recieved that notifies the client that the file is ready the client switches to recieve mode.
 
-Commands are "quit" or "stream" on the prompt. Stream swithes to streaming mode.
+#### Transmission ending
+The most significant differance between UDP clients and TCP clients is in their method of detecting the end of a transmission.
+
+UDP client will wait for UDP packets to arrive until socket.settimeout() expires, the timeout value is reset for every packet recieved.. Change this value by changing RcvTimeOut_file variable. If requesting a large file from server it will take a while for the server to generate that file, if the client times out before the file begins to be sent by the server then try increasing value of RcvTimeOut_file.
+
+TCP client checks for an empty byte string from the socket. If this is detected it assumes the end of transmission.
 
 
 
@@ -68,6 +37,10 @@ Commands are "quit" or "stream" on the prompt. Stream swithes to streaming mode.
 * The server imports dependencies from ardei_server_utils.py and the clients from ardei_client_utils.py.
 * The servers by default do not accept requests for greater than 123456789 character transfers.
 
+
+
+## Bugs
+* The TCP client-server pair when a request for a small file is made will sometimes appear to get data discrepancies. This could be from tempFile read/write or TCP send/recv buffers.
 
 
 
@@ -102,3 +75,15 @@ A fundamental truth of sockets: messages must either be fixed length (yuck),
 or be delimited (shrug), or indicate how long they are (much better),
 or end by shutting down the connection.
 The choice is entirely yours, (but some ways are righter than others).
+
+
+
+### Advanced Client/Server  TCP by ify:
+Look in the client code for HOST, PORT variable and change the values so that they correspond with the server which you are trying to connect to.
+
+Input "ls" "chdir" "dl" and "quit" commands at prompt. Any other input returns echo.
+
+* ls: requests and displays current working directory and all it's contents from the server
+* chdir: changes current working directory of the server (args: the directory to change to)
+* dl: downloads file (args: the file name to download)
+* quit: disconnects from server and closes socket
