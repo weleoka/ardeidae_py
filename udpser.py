@@ -53,7 +53,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 
                     # TIMETAKE - sending stream.
                     with Utils.Timer() as t:
-                        Utils.send_stream_UDP(sReq, txInterval, txPakets, data)
+                        Utils.send_stream_UDP(sReq, client_address, txInterval, txPakets, data)
                     print ('Sending stream took %.03f sec.' % t.interval)
 
                 else:

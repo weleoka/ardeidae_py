@@ -123,10 +123,10 @@ parameters:
 
 return void
 """
-def send_stream_UDP(sReq, txInterval, txPakets, data):
+def send_stream_UDP(sReq, client_address, txInterval, txPakets, data):
     while txPakets > 1:
         time.sleep(txInterval)
-        sReq.sendto(data)
+        sReq.sendto(data, client_address)
         txPakets = txPakets - 1
 
 
