@@ -14,8 +14,9 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 
     def handle(self):
         # SETTINGS
-        FileLimit = 123456789
-        StreamServerPaketLimit = 10000
+        FileLimit = 123456790 #allows 123456789 to be sent.
+        StreamServerPaketLimit = 10001
+        transferUnitSize = 1024 #How large each chunk of UDP data is that gets sent.
 
         # self.request[1] is the UDP socket connected to the client
         sReq = self.request[1]
@@ -74,7 +75,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 
                     # TIMETAKE - sending file.
                     with Utils.Timer() as t:
-                        Utils.send_tempFile_UDP(sReq, client_address, tempFile)
+                        Utils.send_file_UDP(sReq, client_address, transferUnitSize, tempFile)
                     print('Sending took %.03f sec.' % t.interval)
 
                 # Make an error report and send to client.

@@ -74,7 +74,8 @@ Make a named temporary file and fill it with chars.
 parameters:
     ri: The recieved integer from client.
 
-return tf: temporaryfile instance.
+return:
+    tf: temporaryfile instance.
 """
 def make_tempFile(ri):
     tf = tempfile.NamedTemporaryFile()
@@ -87,6 +88,22 @@ def make_tempFile(ri):
     return tf
 
 
+
+"""
+Read from file.
+
+parameters:
+    tf: tempFile instance.
+
+return:
+    fileData: bytes object of entire file.
+"""
+def readData_tempFile(tf):
+    tf.seek(0)
+    fileData = tf.read()
+    tf.close()
+
+    return fileData
 
 
 """
@@ -101,7 +118,8 @@ Print out the UDP server welcome screen.
 parameters:
     port: The assigned port number.
 
-return void
+return:
+    void
 """
 def print_startup_msg_UDP(port):
     print (" ")
@@ -121,37 +139,42 @@ parameters:
     txPakets: integer, the number of packets to send.
     data: bytes object, the data to include in each packet.
 
-return void
+return:
+    void
 """
 def send_stream_UDP(sReq, client_address, txInterval, txPakets, data):
     while txPakets > 1:
         time.sleep(txInterval)
         sReq.sendto(data, client_address)
         txPakets = txPakets - 1
+    return
 
 
 
 """
+obselete.
 Send file to connected client UDP.
 
 parameters:
     sReq: the client request instance.
     client_address: the remote address of the client making the request.
+    transferUnitSize: bytes, the amount of data in each UDP paket.
     tempFile: the temporary file instance.
 
-return boolean
+return:
+    void
 """
-def send_tempFile_UDP(sReq, client_address, tempFile):
-    # Read the information from the file.
+def send_file_UDP(sReq, client_address, transferUnitSize, tempFile):
     tempFile.seek(0)
-    buf = 1024
-    fileData = tempFile.read(buf)
 
+    fileData = tempFile.read(transferUnitSize)
     while (fileData):
-        if(sReq.sendto(fileData, client_address)):
-            fileData = tempFile.read(buf)
+        sReq.sendto(fileData, client_address)
+        fileData = tempFile.read(transferUnitSize)
 
     tempFile.close()
+    return
+
 
 
 
@@ -167,7 +190,8 @@ Print out the TCP server welcome screen.
 parameters:
     port: The assigned port number.
 
-return void
+return:
+    void
 """
 def print_startup_msg_TCP(port):
     print (" ")
@@ -195,6 +219,7 @@ def send_stream_TCP(sReq, txInterval, txPakets, data):
         time.sleep(txInterval)
         sReq.send(data)
         txPakets = txPakets - 1
+    return
 
 
 
@@ -206,20 +231,16 @@ parameters:
     tempFile: the temporary file instance.
 
 return:
-    boolean
+    void
 """
-def send_tempFile_TCP(sReq, tempFile):
-    # Read the information from the file.
+def send_file_TCP(sReq, tempFile):
     tempFile.seek(0)
-    buf = 1024
-    toSend =b''
-    fileData = tempFile.read(buf)
-    while (fileData):
-        toSend = toSend + fileData
-        fileData = tempFile.read(buf)
-
+    fileData = tempFile.read()
     tempFile.close()
-    sReq.sendall(toSend)
+
+    ## Return the return value from sendall to stop the timer.
+    return sReq.sendall(fileData)
+
 
 
 
@@ -235,7 +256,8 @@ Make a file prepared confirmation.
 parameters:
     tempFile: the temp file instance.
 
-return encoded confirmation message.
+return:
+    string, encoded confirmation message.
 """
 def make_confirmationReport(tempFile):
     metadata = os.stat(tempFile.name)
@@ -252,7 +274,8 @@ parameters:
     FileLimit: global value limiting the temporary file size.
     recievedInteger: the integer recieved from client.
 
-return encoded string.
+return:
+    encoded string.
 """
 def make_faultReportFile(FileLimit, recievedInteger):
     feedback = "Request for file of " + str(recievedInteger) + " chars. Server limit is: " + str(FileLimit) + " chars."
@@ -268,7 +291,8 @@ parameters:
     FileLimit: global value limiting the temporary file size.
     recievedInteger: the integer recieved from client.
 
-return encoded string.
+return:
+    encoded string.
 """
 def make_faultReportStream(txInterval, txPakets):
     feedback = "Request for transfer of " + str(txPakets) + " pakets at: " + str(txInterval) + " has errors."
@@ -285,7 +309,8 @@ parameters:
     date: the recieved data.
     client_address: the address from which the data was recieved.
 
-return uppercase string.
+return:
+    uppercase string.
 """
 def make_echoReport(data, client_address):
     timestamp = datetime.datetime.now().strftime("%I:%M%p")
@@ -301,7 +326,8 @@ Make an empty report.
 parameters:
     none
 
-return void
+return:
+    void
 """
 def print_emptyReport():
     print ("Recieved client request of absolutely nothing.")
@@ -314,7 +340,8 @@ Make jobDone report.
 parameters:
     client_address
 
-return void
+return:
+    void
 """
 def print_jobDoneReport(client_address):
     print ("Server completed request from ", client_address)

@@ -14,8 +14,8 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
     def handle(self):
         # SETTINGS
-        FileLimit = 123456789
-        StreamServerPaketLimit = 10000
+        FileLimit = 123456790 #allows 123456789 to be sent.
+        StreamServerPaketLimit = 10001
 
         # self.request is the TCP socket connected to the client
         sReq = self.request
@@ -74,7 +74,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
                     # TIMETAKE - sending file.
                     with Utils.Timer() as t:
-                        Utils.send_tempFile_TCP(sReq, tempFile)
+                        Utils.send_file_TCP(sReq, tempFile)
                     print('Sending took %.03f sec.' % t.interval)
 
                 # Make an error report and send to client.

@@ -176,7 +176,7 @@ def recv_file_UDP(cnct):
 
     while True:
         try:
-            chunk = cnct.recv(1024)
+            chunk = cnct.recv()
             tf.write(chunk)
         except socket.timeout:
             tf.flush() # Flush the write buffer to file.
@@ -198,7 +198,7 @@ def recv_stream_UDP(cnct):
 
     while True:
         try:
-            chunk = cnct.recv(1024)
+            chunk = cnct.recv()
         except socket.timeout:
             print("Socket timed out on recv_stream.")
             return msg
