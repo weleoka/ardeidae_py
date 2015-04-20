@@ -37,7 +37,7 @@ return:
 
 """
 def select_host():
-    print("Choose host and port to bind to please: ")
+    print("Choose host-port to bind to please: ")
     fh = open( "hosts.txt" );
 
     listHosts = []
@@ -56,7 +56,7 @@ def select_host():
         typedInteger = int(prompt)
     except:
         typedInteger = 0
-        print ("Default server selected.")
+        print ("Default host-port selected.")
         pass
 
     selectedHost = listHosts[typedInteger]

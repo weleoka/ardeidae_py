@@ -114,6 +114,6 @@ if __name__ == "__main__":
         Utils.print_startup_msg_TCP(PORT)
         server.serve_forever()
     except socket.error:
-        print ('Failed to create socket.')
+        print ('Failed to bind to socket.')
         sys.exit()
 
