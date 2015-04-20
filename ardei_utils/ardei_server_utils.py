@@ -158,19 +158,19 @@ Send file to connected client UDP.
 parameters:
     sReq: the client request instance.
     client_address: the remote address of the client making the request.
-    transferUnitSize: bytes, the amount of data in each UDP paket.
+    txUnitSize: bytes, the amount of data in each UDP paket.
     tempFile: the temporary file instance.
 
 return:
     void
 """
-def send_file_UDP(sReq, client_address, transferUnitSize, tempFile):
+def send_file_UDP(sReq, client_address, txUnitSize, tempFile):
     tempFile.seek(0)
 
-    fileData = tempFile.read(transferUnitSize)
+    fileData = tempFile.read(txUnitSize)
     while (fileData):
         sReq.sendto(fileData, client_address)
-        fileData = tempFile.read(transferUnitSize)
+        fileData = tempFile.read(txUnitSize)
 
     tempFile.close()
     return

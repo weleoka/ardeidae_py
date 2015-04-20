@@ -8,7 +8,8 @@ Utils = ardei_client_utils
 
 # Specify if recieved files are to be output to terminal or not.
 PrintFile = False
-
+#How large each chunk of TCP data is that gets recv:d.
+recvBuffSize = 1024
 
 """
 Startup function.
@@ -51,7 +52,7 @@ def start_here (theConnection):
             streamRequest = str.encode('stream-' + str(interval) + '-' + str(pakets))
             theConnection.sendall(streamRequest)
 
-            streamData, counter = Utils.recv_stream_TCP(theConnection)
+            streamData, counter = Utils.recv_stream_TCP(theConnection, recvBuffSize)
             print("Recieved: " + str(len(streamData)/len(streamRequest)) + " pakets (count: " + str(counter) + ").")
 
 
@@ -66,7 +67,7 @@ def start_here (theConnection):
                 print ("Please wait for the server to prepare your file.\n..........")
                 if Utils.monitor_server_response(theConnection):
 
-                    dataRecieved = Utils.recv_file_TCP(theConnection)
+                    dataRecieved = Utils.recv_file_TCP(theConnection, recvBuffSize)
 
                     Utils.print_file_stats(dataRecieved)
                     Utils.print_file_contents(dataRecieved, PrintFile)
@@ -81,7 +82,7 @@ def start_here (theConnection):
                 # Send the command.
                 theConnection.sendall(promptBytes)
 
-                dataRecieved = theConnection.recv(1024)
+                dataRecieved = theConnection.recv(recvBuffSize)
                 Utils.print_dataRecieved(dataRecieved)
 
                 Utils.quit_now_TCP (theConnection)

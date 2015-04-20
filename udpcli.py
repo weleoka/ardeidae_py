@@ -12,6 +12,8 @@ PrintFile = False
 RcvTimeOut_file = 15
 # Default timeout for client if nothing recieved.
 RcvTimeOut_default = 2
+#How large each chunk of UDP data is that gets recv:d.
+recvBuffSize = 1024
 
 
 
@@ -58,7 +60,7 @@ def start_here (theConnection):
             streamRequest = str.encode('stream-' + str(interval) + '-' + str(pakets))
             theConnection.sendto(streamRequest, (HOST, PORT))
 
-            streamData = Utils.recv_stream_UDP(theConnection)
+            streamData = Utils.recv_stream_UDP(theConnection, recvBuffSize)
             print("Recieved: " + str(len(streamData)/len(streamRequest)) + " pakets.")
 
 
@@ -76,7 +78,7 @@ def start_here (theConnection):
                     # Set the timeout back to default.
                     theConnection.settimeout(RcvTimeOut_default)
 
-                    dataRecieved = Utils.recv_file_UDP(theConnection)
+                    dataRecieved = Utils.recv_file_UDP(theConnection, recvBuffSize)
 
                     Utils.print_file_stats(dataRecieved)
                     Utils.print_file_contents(dataRecieved, PrintFile)
@@ -92,7 +94,7 @@ def start_here (theConnection):
                 theConnection.settimeout(RcvTimeOut_default)
                 theConnection.sendto(promtBytes, (HOST, PORT))
 
-                dataRecieved = theConnection.recv(1024)
+                dataRecieved = theConnection.recv(recvBuffSize)
                 Utils.print_dataRecieved(dataRecieved)
 
                 Utils.quit_now_UDP ()

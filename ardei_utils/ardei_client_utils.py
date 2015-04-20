@@ -167,16 +167,17 @@ def monitor_server_response (cnct):
 UDP Recieve data and write to named temporary file.
 parameters:
     cnct: The connection.
+    recvBuffSize: integer. Size of recieve buffer.
 
 return:
     tf: temporaryfile instance.
 """
-def recv_file_UDP(cnct):
+def recv_file_UDP(cnct, recvBuffSize):
     tf = tempfile.NamedTemporaryFile()
 
     while True:
         try:
-            chunk = cnct.recv()
+            chunk = cnct.recv(recvBuffSize)
             tf.write(chunk)
         except socket.timeout:
             tf.flush() # Flush the write buffer to file.
@@ -189,16 +190,17 @@ Recieve data STREAM over UDP and write to named temporary file.
 
 parameters:
     cnct: The connection.
+    recvBuffSize: integer. Size of recieve buffer.
 
 return:
     tf: temporaryfile instance.
 """
-def recv_stream_UDP(cnct):
+def recv_stream_UDP(cnct, recvBuffSize):
     msg = ''
 
     while True:
         try:
-            chunk = cnct.recv()
+            chunk = cnct.recv(recvBuffSize)
         except socket.timeout:
             print("Socket timed out on recv_stream.")
             return msg
@@ -233,14 +235,15 @@ def quit_now_UDP ():
 TCP Recieve data and write to named temporary file.
 parameters:
     cnct: The connection.
+    recvBuffSize: integer. Size of recieve buffer.
 
 return:
     tf: temporaryfile instance.
 """
-def recv_file_TCP(cnct):
+def recv_file_TCP(cnct, recvBuffSize):
     tf = tempfile.NamedTemporaryFile()
     while True:
-        chunk = cnct.recv(1024)#MSGLEN-len(msg))
+        chunk = cnct.recv(recvBuffSize)#MSGLEN-len(msg))
         tf.write(chunk)
 
         if chunk == b'':
@@ -254,17 +257,18 @@ Recieve data STREAM over TCP and write to named temporary file.
 
 parameters:
     cnct: The connection.
+    recvBuffSize: integer. Size of recieve buffer.
 
 return:
     msg: string. The recieved data.
     counter: integer. The number of iterations of the loop.
 """
-def recv_stream_TCP(cnct):
+def recv_stream_TCP(cnct, recvBuffSize):
     msg = ''
     counter = 0
 
     while True:
-        chunk = cnct.recv(1024)
+        chunk = cnct.recv(recvBuffSize)
         chunkStr = chunk.decode('utf-8')
 
         if chunk == b'':
