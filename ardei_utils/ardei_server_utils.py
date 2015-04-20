@@ -216,7 +216,7 @@ return:
     void
 """
 def send_stream_TCP(sReq, txInterval, txPakets, data):
-    while txPakets > 1:
+    while txPakets > 0:
         time.sleep(txInterval)
         sReq.send(data)
         txPakets = txPakets - 1

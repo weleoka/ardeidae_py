@@ -1,6 +1,7 @@
 localhost:8120
+192.168.1.36:8120
 sweet.student.bth.se:8120
 seekers.student.bth.se:8120
+194.47.153.18:8120
 ardeidae.computersforpeace.net:8120
-192.168.1.36:8120
 127.0.1.1:8120

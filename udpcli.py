@@ -9,7 +9,7 @@ Utils = ardei_client_utils
 # Specify if recieved files are to be output to terminal or not.
 PrintFile = False
 # How long to wait for the server to generate a file.
-RcvTimeOut_file = 15
+RcvTimeOut_file = 10
 # Default timeout for client if nothing recieved.
 RcvTimeOut_default = 2
 #How large each chunk of UDP data is that gets recv:d.
