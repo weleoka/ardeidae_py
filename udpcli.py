@@ -12,7 +12,7 @@ PrintFile = False
 #How large each chunk of UDP data is that gets recv:d.
 recvBuffSize = 1024
 # How long to wait for the server to generate a file.
-RcvTimeOut_file = 10
+RcvTimeOut_file = 20
 # Default timeout for client if nothing recieved.
 RcvTimeOut_default = 2
 

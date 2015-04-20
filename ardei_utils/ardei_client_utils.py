@@ -198,7 +198,9 @@ def recv_file_UDP(cnct, recvBuffSize):
 
 
 """
-Recieve data STREAM over UDP and write to named temporary file.
+Recieve data STREAM over UDP.
+Count the iterations of the recv loop.
+Also get the sequence number from the packet and check against previous packet.
 
 parameters:
     cnct: The connection.
@@ -222,12 +224,12 @@ def recv_stream_UDP(cnct, recvBuffSize, packets):
 
         chunkStr = chunk.decode('utf-8')
         sequence = chunkStr.split("A", 1)
+
         if int(sequence[0]) == oldSequence:
             oldSequence = oldSequence - 1
         else:
-            print("Detected missing packet")
-            print(sequence)
-            oldSequence = sequence
+            print("Detected missing packet: " + int(oldSequence - 1))
+            oldSequence = sequence[0]
 
         counter = counter + 1
 
