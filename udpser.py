@@ -32,28 +32,30 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 
     ### STREAM Server handling
             if re.search('stream', dataStr):
-                streamRequest = (dataStr.split("-", 2))
+                streamRequest = (dataStr.split("-", 3))
                 try:
-                    txInterval = int(streamRequest[1])/1000
-                    txPakets = int(streamRequest[2])
-                    print("TXinterval: " + str(txInterval) + " TXpakets: " + str(txPakets))
+                    txInterval = int(streamRequest[1])/1000 # Convert milliseconds to seconds
+                    txPackets = int(streamRequest[2])
+                    packetSize = int(streamRequest[3])
+                    print("TXinterval: " + str(txInterval) + " TXpakets: " + str(txPackets) + " Size: " + str(packetSize))
                 except:
-                    print ("Error in streamRequest command: " + str(streamRequest))
+                    print("Error in streamRequest command: " + str(streamRequest))
                     txInterval = False
-                    txPakets = False
+                    txPackets = False
+                    packetSize = False
                     pass
 
                 if txInterval:
-                    if txPakets > StreamServerPaketLimit:
-                        txPakets = StreamServerPaketLimit
+                    if txPackets > StreamServerPaketLimit:
+                        txPackets = StreamServerPaketLimit
 
                     # TIMETAKE - sending stream.
                     with Utils.Timer() as t:
-                        Utils.send_stream_UDP(sReq, client_address, txInterval, txPakets, data)
-                    print ('Sending stream took %.03f sec.' % t.interval)
+                        Utils.send_stream_UDP(sReq, client_address, txInterval, txPackets, packetSize)
+                    print('Sending stream took %.03f sec.' % t.interval)
 
                 else:
-                    faultReport = Utils.make_faultReportStream(streamRequest[1], streamRequest[2])
+                    faultReport = Utils.make_faultReportStream(streamRequest[1], streamRequest[2], streamRequest[3])
                     sReq.sendto(faultReport, client_address)
 
 
@@ -98,7 +100,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     HOST, PORT = Utils.select_host()
 

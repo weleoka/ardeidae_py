@@ -53,16 +53,16 @@ def start_here (theConnection):
 
 
     ### STREAM Request
-        elif str(prompt) == 'stream':
+        elif str(prompt) == 'stream' or str(prompt) == 's':
             print("Switching server to stream mode")
-            interval = input('\nPlease input the paket TX interval (miliseconds) required: ')
-            pakets = input('\nPlease input the number of pakets required: ')
+            interval, packets, packetSize = Utils.prompt_stream()
 
-            streamRequest = str.encode('stream-' + str(interval) + '-' + str(pakets))
+            streamRequest = str.encode('stream-' + str(interval) + '-' + str(packets) + '-' + str(packetSize))
             theConnection.sendto(streamRequest, (HOST, PORT))
 
-            streamData, counter = Utils.recv_stream_UDP(theConnection, recvBuffSize)
-            print("Recieved: " + str(len(streamData)/len(streamRequest)) + " pakets (count: " + str(counter) + ").")
+            counter = Utils.recv_stream_UDP(theConnection, recvBuffSize, packets)
+            print("Recieved " + str(counter) + " packets.")
+
 
 
     ### FILE Request

@@ -48,7 +48,7 @@ def select_host():
     for index, item in enumerate(listHosts):
         print (index, item)
 
-    prompt = input('PROMPT: ')
+    prompt = input('SERVER: ')
 
     try:
         typedInteger = int(prompt)
@@ -63,6 +63,24 @@ def select_host():
         hostString = item.split(":", 1)
 
     return str(hostString[0]), int(hostString[1])
+
+
+
+"""
+Prompt user for stream specs
+parameters:
+    none
+
+return:
+    interval.
+    packets.
+    packetSize.
+"""
+def prompt_stream():
+    interval = input('\nPlease input the paket TX interval (miliseconds) required: ')
+    packets = input('\nPlease input the number of packets required: ')
+    packetSize = input('\nPlease input the size of each packet (Bytes): ')
+    return int(interval), int(packets), int(packetSize)
 
 
 
@@ -185,22 +203,32 @@ Recieve data STREAM over UDP and write to named temporary file.
 parameters:
     cnct: The connection.
     recvBuffSize: integer. Size of recieve buffer.
+    packets: integer. Number of packets requested.
 
 return:
-    tf: temporaryfile instance.
+    counter: integer. Number of iterations of the loop.
 """
-def recv_stream_UDP(cnct, recvBuffSize):
+def recv_stream_UDP(cnct, recvBuffSize, packets):
     msg = b''
     counter = 0
+    oldSequence = packets
 
     while True:
         try:
             chunk = cnct.recv(recvBuffSize)
         except socket.timeout:
             print("Socket timed out on recv_stream.")
-            return msg, counter
+            return counter
 
-        msg = msg + chunk
+        chunkStr = chunk.decode('utf-8')
+        sequence = chunkStr.split("A", 1)
+        if int(sequence[0]) == oldSequence:
+            oldSequence = oldSequence - 1
+        else:
+            print("Detected missing packet")
+            print(sequence)
+            oldSequence = sequence
+
         counter = counter + 1
 
 

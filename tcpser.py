@@ -31,28 +31,30 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
     ### STREAM Server handling
             if re.search('stream', dataStr):
-                streamRequest = (dataStr.split("-", 2))
+                streamRequest = (dataStr.split("-", 3))
                 try:
                     txInterval = int(streamRequest[1])/1000
-                    txPakets = int(streamRequest[2])
-                    print("TXinterval: " + str(txInterval) + " TXpakets: " + str(txPakets))
+                    txPackets = int(streamRequest[2])
+                    packetSize = int(streamRequest[3])
+                    print("TXinterval: " + str(txInterval) + " TXpakets: " + str(txPackets) + " Size: " + str(packetSize))
                 except:
                     print ("Error in streamRequest command: " + str(streamRequest))
                     txInterval = False
-                    txPakets = False
+                    txPackets = False
+                    packetSize = False
                     pass
 
                 if txInterval:
-                    if txPakets > StreamServerPaketLimit:
-                        txPakets = StreamServerPaketLimit
+                    if txPackets > StreamServerPaketLimit:
+                        txPackets = StreamServerPaketLimit
 
                     # TIMETAKE - sending stream.
                     with Utils.Timer() as t:
-                        Utils.send_stream_TCP(sReq, txInterval, txPakets, data)
+                        Utils.send_stream_TCP(sReq, txInterval, txPackets, packetSize)
                     print ('Sending stream took %.03f sec.' % t.interval)
 
                 else:
-                    faultReport = Utils.make_faultReportStream(streamRequest[1], streamRequest[2])
+                    faultReport = Utils.make_faultReportStream(streamRequest[1], streamRequest[2], streamRequest[3])
                     sReq.sendall(faultReport)
 
 
@@ -98,7 +100,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     # Allow reuse of listening address. Useful if stoping and starting alot in development.
     socketserver.TCPServer.allow_reuse_address = True;
 
@@ -111,4 +113,5 @@ if __name__ == "__main__":
     except socket.error as serr:
         print ('Failed to bind to socket: ' + str(serr))
         sys.exit()
+
 

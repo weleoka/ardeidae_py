@@ -5,3 +5,4 @@ seekers.student.bth.se:8120
 194.47.153.18:8120
 ardeidae.computersforpeace.net:8120
 127.0.1.1:8120
+ :8120

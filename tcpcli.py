@@ -47,16 +47,15 @@ def start_here (theConnection):
 
 
     ### STREAM Request
-        elif str(prompt) == 'stream':
+        elif str(prompt) == 'stream' or str(prompt) == 's':
             print("Switching server to stream mode")
-            interval = input('\nPlease input the paket TX interval (miliseconds) required: ')
-            pakets = input('\nPlease input the number of pakets required: ')
+            interval, packets, packetSize = Utils.prompt_stream()
 
-            streamRequest = str.encode('stream-' + str(interval) + '-' + str(pakets))
+            streamRequest = str.encode('stream-' + str(interval) + '-' + str(packets) + '-' + str(packetSize))
             theConnection.sendall(streamRequest)
 
             streamData, counter = Utils.recv_stream_TCP(theConnection, recvBuffSize)
-            print("Recieved: " + str(len(streamData)/len(streamRequest)) + " pakets (count: " + str(counter) + ").")
+            print("Recieved " + str(counter) + " packets.")
 
 
 
@@ -109,7 +108,6 @@ print_startup_msg()
 try:
     clientSocket.connect((HOST, PORT))
     print ("...connected.")
-    print ("(please input string to echo, or integer to request file of certain number Bytes).")
 except socket.error as serr:
     print ('Failed to connect to server: ' + str(serr))
     sys.exit()
