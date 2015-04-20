@@ -268,17 +268,16 @@ return:
     counter: integer. The number of iterations of the loop.
 """
 def recv_stream_TCP(cnct, recvBuffSize):
-    msg = ''
+    msg = b''
     counter = 0
 
     while True:
         chunk = cnct.recv(recvBuffSize)
-        chunkStr = chunk.decode('utf-8')
 
         if chunk == b'':
            return msg, counter
 
-        msg = msg + chunkStr
+        msg = msg + chunk
         counter = counter + 1
 
 
