@@ -125,7 +125,7 @@ return:
 """
 def print_dataRecieved(rd):
     print ("Received {0} bytes of data.".format(sys.getsizeof(rd)))
-    print (str(rd))
+    print (str(rd.decode('utf-8')))
 
 
 

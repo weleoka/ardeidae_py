@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-'''
-This program generates a file of a certain length and sends it to a client.
-If anything other than an integer is recieved from client it will echo the string back.
-After processing one request the server will shut down.
-'''
 
 import socketserver, socket, sys, re, time
 from ardei_utils import ardei_server_utils
@@ -111,8 +106,8 @@ if __name__ == "__main__":
         server = socketserver.UDPServer((HOST, PORT), MyUDPHandler)
         Utils.print_startup_msg_UDP(PORT)
         server.serve_forever()
-    except socket.error:
-        print ('Failed to bind to socket.')
+    except socket.error as serr:
+        print ('Failed to bind to socket: ' + str(serr))
         sys.exit()
 
 

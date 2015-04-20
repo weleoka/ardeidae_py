@@ -3,10 +3,6 @@ import tempfile
 import datetime
 import os
 import socket
-"""
-Here are some functions reqired for the ardeidae_py servers to run.
-"""
-
 
 
 """
@@ -153,7 +149,6 @@ def send_stream_UDP(sReq, client_address, txInterval, txPakets, data):
 
 
 """
-obselete.
 Send file to connected client UDP.
 
 parameters:
@@ -316,13 +311,13 @@ return:
 def make_echoReport(data, client_address):
     timestamp = datetime.datetime.now().strftime("%I:%M%p")
     print ("\n", timestamp, "{} wrote: ".format(client_address))
-    print (data)
+    print (data.decode('utf-8'))
     return data.upper()
 
 
 
 """
-Make an empty report.
+Print an empty report.
 
 parameters:
     none
@@ -336,7 +331,7 @@ def print_emptyReport():
 
 
 """
-Make jobDone report.
+Print jobDone report.
 
 parameters:
     client_address
