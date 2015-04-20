@@ -9,12 +9,12 @@ Utils = ardei_client_utils
 
 # Specify if recieved files are to be output to terminal or not.
 PrintFile = False
+#How large each chunk of UDP data is that gets recv:d.
+recvBuffSize = 1024
 # How long to wait for the server to generate a file.
 RcvTimeOut_file = 10
 # Default timeout for client if nothing recieved.
 RcvTimeOut_default = 2
-#How large each chunk of UDP data is that gets recv:d.
-recvBuffSize = 1024
 
 
 
@@ -107,6 +107,8 @@ def start_here (theConnection):
         received = "Nothing recieved because nothing sent."
 
 
+
+### Select HOST and PORT.
 HOST, PORT = Utils.select_host()
 
 # Create a socket (SOCK_DGRAM means a UDP socket).

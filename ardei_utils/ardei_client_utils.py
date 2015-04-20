@@ -4,12 +4,6 @@ import os
 import re
 import socket
 import sys
-"""
-These are the reqired functions for the Ardeiday_py clients to run properly.
-
-Functions include a simple timer module, as well as functions for recieving a file over UDP or TCP,
-and also to test a response from a server for confirmations and status updates.
-"""
 
 
 

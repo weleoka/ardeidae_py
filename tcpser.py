@@ -10,7 +10,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
     def handle(self):
         # SETTINGS
         FileLimit = 123456790 #allows 123456789 to be sent.
-        StreamServerPaketLimit = 10001
+        StreamServerPaketLimit = 10001 #Restriction on number of pakets to be streamed.
 
         # self.request is the TCP socket connected to the client
         sReq = self.request

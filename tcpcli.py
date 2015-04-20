@@ -12,6 +12,8 @@ PrintFile = False
 #How large each chunk of TCP data is that gets recv:d.
 recvBuffSize = 1024
 
+
+
 """
 Startup function.
 """
@@ -96,6 +98,8 @@ def start_here (theConnection):
         received = "Nothing recieved because nothing sent."
 
 
+
+### Select HOST and PORT.
 HOST, PORT = Utils.select_host()
 
 # Create a socket (SOCK_STREAM means a TCP socket), connect to server.
@@ -106,8 +110,8 @@ try:
     clientSocket.connect((HOST, PORT))
     print ("...connected.")
     print ("(please input string to echo, or integer to request file of certain number Bytes).")
-except:
-    print ("Failed to connect to server.")
+except socket.error as serr:
+    print ('Failed to connect to server: ' + str(serr))
     sys.exit()
 
 start_here(clientSocket)

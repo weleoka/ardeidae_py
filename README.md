@@ -42,7 +42,8 @@ TCP client checks for an empty byte string from the socket. If this is detected 
 
 
 ## Bugs
-* The TCP client-server pair when a request for a small file is made will sometimes appear to get data discrepancies. This could be from tempFile read/write or TCP send/recv buffers.
+
+Please report an issue if one is found.
 
 
 
@@ -77,15 +78,3 @@ A fundamental truth of sockets: messages must either be fixed length (yuck),
 or be delimited (shrug), or indicate how long they are (much better),
 or end by shutting down the connection.
 The choice is entirely yours, (but some ways are righter than others).
-
-
-
-### Advanced Client/Server  TCP by ify:
-Look in the client code for HOST, PORT variable and change the values so that they correspond with the server which you are trying to connect to.
-
-Input "ls" "chdir" "dl" and "quit" commands at prompt. Any other input returns echo.
-
-* ls: requests and displays current working directory and all it's contents from the server
-* chdir: changes current working directory of the server (args: the directory to change to)
-* dl: downloads file (args: the file name to download)
-* quit: disconnects from server and closes socket
