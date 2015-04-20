@@ -60,9 +60,8 @@ def start_here (theConnection):
             streamRequest = str.encode('stream-' + str(interval) + '-' + str(pakets))
             theConnection.sendto(streamRequest, (HOST, PORT))
 
-            streamData = Utils.recv_stream_UDP(theConnection, recvBuffSize)
-            print("Recieved: " + str(len(streamData)/len(streamRequest)) + " pakets.")
-
+            streamData, counter = Utils.recv_stream_UDP(theConnection, recvBuffSize)
+            print("Recieved: " + str(len(streamData)/len(streamRequest)) + " pakets (count: " + str(counter) + ").")
 
 
     ### FILE Request

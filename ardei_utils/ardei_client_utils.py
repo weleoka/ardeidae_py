@@ -196,14 +196,19 @@ return:
     tf: temporaryfile instance.
 """
 def recv_stream_UDP(cnct, recvBuffSize):
-    msg = ''
+    msg = b''
+    counter = 0
 
     while True:
         try:
             chunk = cnct.recv(recvBuffSize)
+            msg = msg + chunk
         except socket.timeout:
             print("Socket timed out on recv_stream.")
-            return msg
+            return msg, counter
+
+        msg = msg + chunk
+        counter = counter + 1
 
 
 
