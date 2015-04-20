@@ -202,7 +202,6 @@ def recv_stream_UDP(cnct, recvBuffSize):
     while True:
         try:
             chunk = cnct.recv(recvBuffSize)
-            msg = msg + chunk
         except socket.timeout:
             print("Socket timed out on recv_stream.")
             return msg, counter

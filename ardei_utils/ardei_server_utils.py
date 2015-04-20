@@ -143,8 +143,8 @@ return:
     void
 """
 def send_stream_UDP(sReq, client_address, txInterval, txPakets, data):
+    print (data.decode('utf-8'))
     while txPakets > 0:
-        print("Sending...")
         time.sleep(txInterval)
         sReq.sendto(data, client_address)
         txPakets = txPakets - 1
