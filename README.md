@@ -43,9 +43,12 @@ TCP client checks for an empty byte string from the socket. If this is detected 
 
 
 
-## Bugs
+## Bugs and Issues
 
 Please report an issue if one is found.
+
+* Test UDP sending functions with respect to time-taking. Select best way of measuring transfer rate.
+* params for string encode vs. decode for network transfer.
 
 
 

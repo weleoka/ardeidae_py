@@ -76,12 +76,21 @@ return:
 """
 def make_tempFile(ri):
     tf = tempfile.NamedTemporaryFile()
-    chunkStr = 'A'.encode('utf-8')
-    for x in range(0, ri):
-        chunk = chunkStr
-        tf.write(chunk)
+    arr = []
+    chunkStr = 'A'
 
+
+    while True:
+        if len(arr) >= ri:
+            break
+        else:
+            arr.append(chunkStr)
+
+    string = ''.join(arr) # Turn the list of individual chars into string.
+
+    tf.write(string.encode('utf-8'))
     tf.flush() # Flush the write buffer to file.
+
     return tf
 
 
@@ -133,10 +142,10 @@ def readData_tempFile(tf):
     return fileData
 
 
+
 """
 ======== U D P =============
 """
-
 
 
 """

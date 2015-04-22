@@ -66,16 +66,15 @@ def start_here (theConnection):
                 theConnection.sendall(promptBytes)
 
                 # Wait for server to generate confirmation message
-                print ("Please wait for the server to prepare your file.\n..........")
                 if Utils.monitor_server_response(theConnection):
 
-                    # TIMETAKE - sending stream.
+                    # TIMETAKE.
                     with Utils.Timer() as t:
-                        dataRecieved = Utils.recv_file_TCP(theConnection, recvBuffSize)
+                        tempFile = Utils.recv_file_TCP(theConnection, recvBuffSize)
 
+                    Utils.print_file_stats(tempFile, typedInteger)
                     Utils.print_transferRate(t.interval, typedInteger)
-                    Utils.print_file_stats(dataRecieved)
-                    Utils.print_file_contents(dataRecieved, PrintFile)
+                    Utils.print_file_contents(tempFile, PrintFile)
 
                 else:
                     Utils.quit_now_TCP(theConnection)

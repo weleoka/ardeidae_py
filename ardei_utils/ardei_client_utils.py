@@ -18,7 +18,10 @@ class Timer:
     def __exit__(self, *args):
         self.end = time.clock()
         self.interval = self.end - self.start
-
+                    # TIMETAKE - sending file.
+                    # with Utils.Timer() as t:
+                       # Utils.send_stream_TCP(sReq, txInterval, txPackets, packetSize)
+                    # print('Sending took %.03f sec.' % t.interval)
 
 
 """
@@ -122,13 +125,23 @@ def print_transferRate(interval, typedInteger):
 Output to console file stats.
 parameters:
     rf: the recieved file.
+    ti: int, the typed typedInteger value from user.
 
 return:
     void.
 """
-def print_file_stats (rf):
-    metadata = os.stat(rf.name)
-    print ("Recieved file \n (", rf.name, ")") # \n size: " + str(metadata.st_size) + " bytes.")
+def print_file_stats (rf, ti):
+    rf.seek(0)
+    rfFileData = rf.read()
+    rfFileLength = len(rfFileData)
+
+    loss = ti - rfFileLength
+
+    if loss > 0:
+        percentageLoss = 100 * (loss / ti)
+        print ("Loss detected: " + str(loss) + " chars missing from file. ( %.02f percent loss)" % percentageLoss)
+    elif loss == 0:
+        print ("Recieved complete file (" + str(rfFileLength) + " chars). Saved as: \n (", rf.name, ")")
 
 
 
@@ -143,21 +156,18 @@ return:
     void.
 """
 def print_file_contents (rf, PrintFile):
-    buf = 1024
-    i = 0
-    rf.seek(0)
+    if PrintFile:
+        buf = 1024
 
-    data = rf.read(buf)
-
-    while data:
-        tmpstr = data.decode('utf-8')
-        if PrintFile:
-            print (tmpstr)
-        i = i + len(tmpstr)
+        rf.seek(0)
         data = rf.read(buf)
 
-    print ("Total recieved: " +str(i) + " chars.")
-    rf.close()
+        while data:
+            tmpstr = data.decode('utf-8')
+            print (tmpstr)
+            data = rf.read(buf)
+
+        rf.close()
 
 
 
@@ -175,39 +185,11 @@ def print_dataRecieved(rd):
 
 
 
-"""
-Decide what to do after a response from server.
-parameters:
-    cnct: The connection.
-
-return:
-    boolean.
-"""
-def monitor_server_response (cnct):
-    while True:
-        try:
-            chunkStr = cnct.recv(1024)
-            response = chunkStr.decode('utf-8')
-            if re.search('file_prepared', response):
-                print ("Server has prepared the file, recieving...")
-                return True
-            else:
-                print (str(response))
-                return False
-        except socket.timeout:
-            print ("Client timed out. Try increasing RcvTimeOut")
-            return False
-
-
-
-
 
 
 """
 ======== U D P =============
 """
-
-
 
 """
 UDP Recieve data and write to named temporary file.
@@ -291,8 +273,6 @@ def quit_now_UDP ():
 ======== T C P =============
 """
 
-
-
 """
 TCP Recieve data and write to named temporary file.
 parameters:
@@ -354,3 +334,31 @@ def quit_now_TCP(cnct):
     print ("...disconnected.")
     print ("Shutting down client...")
     sys.exit()
+
+
+
+
+
+"""
+Decide what to do after a response from server.
+parameters:
+    cnct: The connection.
+
+return:
+    boolean.
+"""
+def monitor_server_response (cnct):
+    print ("Please wait for the server to prepare your file.\n..........")
+    while True:
+        try:
+            chunkStr = cnct.recv(1024)
+            response = chunkStr.decode('utf-8')
+            if re.search('file_prepared', response):
+                print ("Server has prepared the file, recieving...")
+                return True
+            else:
+                print (str(response))
+                return False
+        except socket.timeout:
+            print ("Client timed out. Try increasing RcvTimeOut")
+            return False
