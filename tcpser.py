@@ -48,10 +48,10 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                     if txPackets > StreamServerPaketLimit:
                         txPackets = StreamServerPaketLimit
 
-                    # TIMETAKE - sending stream.
+                    # TIMETAKE - sending file.
                     with Utils.Timer() as t:
                         Utils.send_stream_TCP(sReq, txInterval, txPackets, packetSize)
-                    print ('Sending stream took %.03f sec.' % t.interval)
+                    print('Sending took %.03f sec.' % t.interval)
 
                 else:
                     faultReport = Utils.make_faultReportStream(streamRequest[1], streamRequest[2], streamRequest[3])
@@ -69,10 +69,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                     confirmation = Utils.make_confirmationReport(tempFile)
                     sReq.sendall(confirmation)
 
-                    # TIMETAKE - sending file.
-                    with Utils.Timer() as t:
-                        Utils.send_file_TCP(sReq, tempFile)
-                    print('Sending took %.03f sec.' % t.interval)
+                    Utils.send_file_TCP(sReq, tempFile)
 
                 # Make an error report and send to client.
                 elif recievedInteger > FileLimit:

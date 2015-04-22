@@ -85,6 +85,40 @@ def prompt_stream():
 
 
 """
+Output to console data recieved per second.
+parameters:
+    interval: int.
+    typedInteger: float. The size of requested data in Bytes.
+
+return:
+    void.
+"""
+def print_transferRate(interval, typedInteger):
+    print ('Recieving file took %.03f sec.' % interval)
+    bytesPerSec = False
+    kBytesPerSec = False
+    mBytesPerSec = False
+    if interval > 0:
+        bytesPerSec = typedInteger / interval
+        # Format the transfer rate to be human readable.
+        if bytesPerSec > 2000:
+            kBytesPerSec = bytesPerSec / 1000
+            bytesPerSec = False
+            if kBytesPerSec > 2000:
+                mBytesPerSec = kBytesPerSec / 1000
+                kBytesPerSec = False
+    if bytesPerSec:
+        print("B/s: " + str(bytesPerSec))
+    elif kBytesPerSec:
+        print("kB/s: " + str(kBytesPerSec))
+    elif mBytesPerSec:
+        print("MB/s: " + str(mBytesPerSec))
+    else:
+        print("No transfer rate data.")
+
+
+
+"""
 Output to console file stats.
 parameters:
     rf: the recieved file.

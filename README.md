@@ -26,6 +26,8 @@ If the file requested is particularly large the server will take quite a long ti
 
 Once a packet is recieved that notifies the client that the file is ready the client switches to recieve mode.
 
+The TCP stack accepts all the file data from the application almost instantaniously so that a timer on TCP transmissions is not plausable at application level. Recieveing time is easy enough to measure, and from that a transfer rate can be calculated.
+
 #### Transmission ending
 The most significant differance between UDP clients and TCP clients is in their method of detecting the end of a transmission.
 
