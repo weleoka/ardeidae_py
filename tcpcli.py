@@ -48,7 +48,6 @@ def start_here (theConnection):
 
     ### STREAM Request
         elif str(prompt) == 'stream' or str(prompt) == 's':
-            print("Switching server to stream mode")
             interval, packets, packetSize = Utils.prompt_stream()
 
             streamRequest = str.encode('stream-' + str(interval) + '-' + str(packets) + '-' + str(packetSize))

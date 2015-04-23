@@ -80,6 +80,7 @@ return:
     packetSize.
 """
 def prompt_stream():
+    print("Switched to stream mode.")
     interval = input('\nPlease input the paket TX interval (miliseconds) required: ')
     packets = input('\nPlease input the number of packets required: ')
     packetSize = input('\nPlease input the size of each packet (Bytes): ')
