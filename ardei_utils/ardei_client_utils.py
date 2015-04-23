@@ -265,11 +265,18 @@ def recv_stream_UDP(cnct, recvBuffSize, segments):
         chunkStr = chunk.decode('utf-8')
         sequence = chunkStr.split("A", 1)
 
-        if int(sequence[0]) == oldSequence:
-            oldSequence = oldSequence - 1
-        else:
-            print("Detected missing segment: " + int(oldSequence - 1))
-            oldSequence = sequence[0]
+        try:
+            sequence = int(sequence[0])
+        except:
+            sequence = False
+            pass
+
+        if sequence:
+            if sequence == oldSequence:
+                oldSequence = oldSequence - 1
+            else:
+                print("Detected missing segment: " + str(oldSequence - 1))
+                oldSequence = sequence
 
         counter = counter + 1
 

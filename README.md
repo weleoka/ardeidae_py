@@ -11,7 +11,7 @@ TCP(20 Bytes + options(rare)) and UDP(8 Bytes) for each segment.
 IPv4(20Bytes + options) and IPv6(40 Bytes) for each datagram.
 Link layer frames also have headers: Ethernet (22 Bytes).
 
-
+1 character utf-8 is assumed in this package to be equal to 1 Byte.
 
 ## Usage
 Commands are "quit", "stream", integer or string on the prompt. Stream swithes to streaming mode. Integer request file, string requests an echo from server.
@@ -19,6 +19,8 @@ Commands are "quit", "stream", integer or string on the prompt. Stream swithes t
 Be aware of the config variable PrintFile, if true will attempt to output the whole file to console of client
 
 The servers need to bind to a host and port. These are listed in hosts.txt. The first item is the default host/port which makes starting that easier by just hitting enter at the prompt.
+
+send_stream_TCP and send_stream_UDP functions in ardei_server_utils.py can be modified to send sequence numbered datagram payload or not.
 
 #### Stream
 The client can send a request for a segment stream by typing "stream" at prompt. The servers can send segments at a set interval specified by client, in miliseconds. The servers have a segment limit in their settings.

@@ -96,7 +96,7 @@ def make_tempFile(ri):
 
 
 """
-Make an incremented string of certain bytes(chars)
+Make a segment payload of certain bytes with incremented leader.
 
 parameters:
     code: integer. The sequence number of the segment.
@@ -105,7 +105,7 @@ parameters:
 return:
     str: string. The encoded string
 """
-def make_segment(code, size):
+def make_segment_w_sequence(code, size):
     arr = []
     chunkStr = 'A'
     code = list(str(code)) # Turn the code integer into a string into a list.
@@ -113,6 +113,34 @@ def make_segment(code, size):
     for char in code:
         arr.append(char)
 
+    while True:
+        if len(arr) >= size:
+            break
+        else:
+            arr.append(chunkStr)
+
+    string = ''.join(arr) # Turn the list of individual chars into string.
+
+    return string.encode('utf-8')
+
+
+
+"""
+Make a segment payload of certain bytes.
+
+parameters:
+    size: integer. Size/length of segment requested by client.
+
+return:
+    str: string. The encoded string
+"""
+def make_segment_fixed(size):
+    arr = []
+    chunkStr = 'A'
+    code = list('FIXED') # Append FIXED notaion to payload lead.
+
+    for char in code:
+        arr.append(char)
     while True:
         if len(arr) >= size:
             break
@@ -150,6 +178,7 @@ def readData_tempFile(tf):
 
 """
 Send a stream to client UDP.
+Segment can be generated once or for every iteration. Comment out accordingly.
 
 parameters:
     sReq: the client request instance.
@@ -161,9 +190,11 @@ return:
     void
 """
 def send_stream_UDP(sReq, client_address, txInterval, txPackets, segmentSize):
+    segment = make_segment_fixed(segmentSize) # No sequence number segment.
+
     while txPackets > 0:
         time.sleep(txInterval)
-        segment = make_segment(txPackets, segmentSize)
+        # segment = make_segment_w_sequence(txPackets, segmentSize) # Sequence numbered segments.
         sReq.sendto(segment, client_address)
         txPackets = txPackets - 1
     return
@@ -203,6 +234,7 @@ def send_file_UDP(sReq, client_address, txUnitSize, tempFile):
 
 """
 Send a stream to connected client TCP.
+Segment can be generated once, or for every iteration. Comment out accordingly.
 
 parameters:
     sReq: the client request instance.
@@ -214,9 +246,10 @@ return:
     void
 """
 def send_stream_TCP(sReq, txInterval, txPackets, segmentSize):
+    segment = make_segment_fixed(segmentSize) # No sequence number segment.
     while txPackets > 0:
         time.sleep(txInterval)
-        segment = make_segment(txPackets, segmentSize)
+        # segment = make_segment_w_sequence(txPackets, segmentSize) # Sequence numbered segments.
         sReq.send(segment)
         txPackets = txPackets - 1
     return
