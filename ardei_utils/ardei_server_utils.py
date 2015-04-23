@@ -99,13 +99,13 @@ def make_tempFile(ri):
 Make an incremented string of certain bytes(chars)
 
 parameters:
-    code: integer. The sequence number of the paket.
-    size: integer. Size/length of paketrequested by client.
+    code: integer. The sequence number of the segment.
+    size: integer. Size/length of segment requested by client.
 
 return:
     str: string. The encoded string
 """
-def make_packet(code, size):
+def make_segment(code, size):
     arr = []
     chunkStr = 'A'
     code = list(str(code)) # Turn the code integer into a string into a list.
@@ -154,17 +154,17 @@ Send a stream to client UDP.
 parameters:
     sReq: the client request instance.
     txInterval: integer, the second delay between sending.
-    txPackets: integer, the number of packets to send.
-    data: bytes object, the data to include in each packet.
+    txPackets: integer, the number of segments to send.
+    data: bytes object, the data to include in each segment.
 
 return:
     void
 """
-def send_stream_UDP(sReq, client_address, txInterval, txPackets, packetSize):
+def send_stream_UDP(sReq, client_address, txInterval, txPackets, segmentSize):
     while txPackets > 0:
         time.sleep(txInterval)
-        packet = make_packet(txPackets, packetSize)
-        sReq.sendto(packet, client_address)
+        segment = make_segment(txPackets, segmentSize)
+        sReq.sendto(segment, client_address)
         txPackets = txPackets - 1
     return
 
@@ -176,7 +176,7 @@ Send file to connected client UDP.
 parameters:
     sReq: the client request instance.
     client_address: the remote address of the client making the request.
-    txUnitSize: bytes, the amount of data in each UDP paket.
+    txUnitSize: bytes, the amount of data in each UDP segment.
     tempFile: the temporary file instance.
 
 return:
@@ -207,17 +207,17 @@ Send a stream to connected client TCP.
 parameters:
     sReq: the client request instance.
     txInterval: integer, the second delay between sending.
-    txPackets: integer, the number of packets to send.
-    data: bytes object, the data to include in each packet.
+    txPackets: integer, the number of segments to send.
+    data: bytes object, the data to include in each segment.
 
 return:
     void
 """
-def send_stream_TCP(sReq, txInterval, txPackets, packetSize):
+def send_stream_TCP(sReq, txInterval, txPackets, segmentSize):
     while txPackets > 0:
         time.sleep(txInterval)
-        packet = make_packet(txPackets, packetSize)
-        sReq.send(packet)
+        segment = make_segment(txPackets, segmentSize)
+        sReq.send(segment)
         txPackets = txPackets - 1
     return
 
@@ -291,8 +291,8 @@ parameters:
 return:
     encoded string.
 """
-def make_faultReportStream(txInterval, txPackets, packetSize):
-    feedback = "Request for transfer of " + str(txPackets) + " packets at interval: " + str(txInterval) + ", of size: " + str(packetSize) + " has errors."
+def make_faultReportStream(txInterval, txPackets, segmentSize):
+    feedback = "Request for transfer of " + str(txPackets) + " segments at interval: " + str(txInterval) + ", of size: " + str(segmentSize) + " has errors."
     print (feedback)
     return str.encode(feedback, 'utf-8')
 

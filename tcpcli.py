@@ -38,13 +38,13 @@ def start_here (theConnection):
 
     ### STREAM Request
         elif str(prompt) == 'stream' or str(prompt) == 's':
-            interval, packets, packetSize = Utils.prompt_stream()
+            interval, segments, segmentSize = Utils.prompt_stream()
 
-            streamRequest = str.encode('stream-' + str(interval) + '-' + str(packets) + '-' + str(packetSize))
+            streamRequest = str.encode('stream-' + str(interval) + '-' + str(segments) + '-' + str(segmentSize))
             theConnection.sendall(streamRequest)
 
             streamData, counter = Utils.recv_stream_TCP(theConnection, recvBuffSize)
-            print("Recieved " + str(counter) + " packets.")
+            print("Recieved " + str(counter) + " segments.")
 
 
 

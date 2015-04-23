@@ -20,7 +20,7 @@ class Timer:
         self.interval = self.end - self.start
                     # TIMETAKE - sending file.
                     # with Utils.Timer() as t:
-                       # Utils.send_stream_TCP(sReq, txInterval, txPackets, packetSize)
+                       # Utils.send_stream_TCP(sReq, txInterval, txPackets, segmentSize)
                     # print('Sending took %.03f sec.' % t.interval)
 
 """
@@ -99,15 +99,15 @@ parameters:
 
 return:
     interval.
-    packets.
-    packetSize.
+    segments.
+    segmentSize.
 """
 def prompt_stream():
     print("Switched to stream mode.")
-    interval = input('\nPlease input the paket TX interval (miliseconds) required: ')
-    packets = input('\nPlease input the number of packets required: ')
-    packetSize = input('\nPlease input the size of each packet (Bytes): ')
-    return int(interval), int(packets), int(packetSize)
+    interval = input('\nPlease input the segment TX interval (miliseconds) required: ')
+    segments = input('\nPlease input the number of segments required: ')
+    segmentSize = input('\nPlease input the size of each segment (Bytes): ')
+    return int(interval), int(segments), int(segmentSize)
 
 
 
@@ -240,20 +240,20 @@ def recv_file_UDP(cnct, recvBuffSize):
 """
 Recieve data STREAM over UDP.
 Count the iterations of the recv loop.
-Also get the sequence number from the packet and check against previous packet.
+Also get the sequence number from the segment and check against previous segment.
 
 parameters:
     cnct: The connection.
     recvBuffSize: integer. Size of recieve buffer.
-    packets: integer. Number of packets requested.
+    segments: integer. Number of segments requested.
 
 return:
     counter: integer. Number of iterations of the loop.
 """
-def recv_stream_UDP(cnct, recvBuffSize, packets):
+def recv_stream_UDP(cnct, recvBuffSize, segments):
     msg = b''
     counter = 0
-    oldSequence = packets
+    oldSequence = segments
 
     while True:
         try:
@@ -268,7 +268,7 @@ def recv_stream_UDP(cnct, recvBuffSize, packets):
         if int(sequence[0]) == oldSequence:
             oldSequence = oldSequence - 1
         else:
-            print("Detected missing packet: " + int(oldSequence - 1))
+            print("Detected missing segment: " + int(oldSequence - 1))
             oldSequence = sequence[0]
 
         counter = counter + 1

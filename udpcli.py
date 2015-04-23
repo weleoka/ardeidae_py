@@ -44,13 +44,13 @@ def start_here (theConnection):
 
     ### STREAM Request
         elif str(prompt) == 'stream' or str(prompt) == 's':
-            interval, packets, packetSize = Utils.prompt_stream()
+            interval, segments, segmentSize = Utils.prompt_stream()
 
-            streamRequest = str.encode('stream-' + str(interval) + '-' + str(packets) + '-' + str(packetSize))
+            streamRequest = str.encode('stream-' + str(interval) + '-' + str(segments) + '-' + str(segmentSize))
             theConnection.sendto(streamRequest, (HOST, PORT))
 
-            counter = Utils.recv_stream_UDP(theConnection, recvBuffSize, packets)
-            print("Recieved " + str(counter) + " packets.")
+            counter = Utils.recv_stream_UDP(theConnection, recvBuffSize, segments)
+            print("Recieved " + str(counter) + " segments.")
 
 
 
