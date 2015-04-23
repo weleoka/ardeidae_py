@@ -49,7 +49,7 @@ def print_startup_msg(HOST, PORT):
 
 
 """
-Select a host and port connect to.
+Prompt select a host and port connect to.
 
 If no or invalid integer is entered at the prompt the default host at index 0 is selected.
 
@@ -60,7 +60,7 @@ return:
     host: string.
     port: integer.
 """
-def select_host():
+def prompt_select_host():
     print("Choose server please:")
     fh = open( "hosts.txt" );
 
@@ -308,8 +308,9 @@ return:
 """
 def recv_file_TCP(cnct, recvBuffSize):
     tf = tempfile.NamedTemporaryFile()
+
     while True:
-        chunk = cnct.recv(recvBuffSize)#MSGLEN-len(msg))
+        chunk = cnct.recv(recvBuffSize)
         tf.write(chunk)
 
         if chunk == b'':

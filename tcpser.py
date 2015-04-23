@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import socketserver, socket, sys, re, time
+import socketserver, socket, sys, re
 from ardei_utils import ardei_server_utils
 
 Utils = ardei_server_utils
@@ -98,17 +98,19 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
 
 if __name__ == '__main__':
-    # Allow reuse of listening address. Useful if stoping and starting alot in development.
+    # Allow reuse of listening address. Useful if stoping and starting a lot in development.
     socketserver.TCPServer.allow_reuse_address = True;
 
-    HOST, PORT = Utils.select_host()
+    HOST, PORT = Utils.prompt_select_host()
 
     try :
         server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
-        Utils.print_startup_msg_TCP(PORT)
-        server.serve_forever()
     except socket.error as serr:
         print ('Failed to bind to socket: ' + str(serr))
         sys.exit()
+
+    print("\nStarted TCP Server... waiting for clients.")
+    Utils.print_startup_msg(PORT)
+    server.serve_forever()
 
 

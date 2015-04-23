@@ -100,7 +100,7 @@ def start_here (theConnection):
 
 
 ### Select HOST and PORT.
-HOST, PORT = Utils.select_host()
+HOST, PORT = Utils.prompt_select_host()
 
 # Create a socket (SOCK_DGRAM means a UDP socket).
 clientSocket = socket.socket(AF_INET, SOCK_DGRAM)

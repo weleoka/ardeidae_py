@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import socketserver, socket, sys, re, time
+import socketserver, socket, sys, re
 from ardei_utils import ardei_server_utils
 
 Utils = ardei_server_utils
@@ -102,15 +102,15 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 
 if __name__ == '__main__':
 
-    HOST, PORT = Utils.select_host()
+    HOST, PORT = Utils.prompt_select_host()
 
     try :
         server = socketserver.UDPServer((HOST, PORT), MyUDPHandler)
-        Utils.print_startup_msg_UDP(PORT)
-        server.serve_forever()
     except socket.error as serr:
         print ('Failed to bind to socket: ' + str(serr))
         sys.exit()
 
-
+    print ("\nStarted ardeidae_py UDP Server... waiting for clients.")
+    Utils.print_startup_msg(PORT)
+    server.serve_forever()
 

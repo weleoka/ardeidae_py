@@ -33,7 +33,7 @@ return:
     port: integer.
 
 """
-def select_host():
+def prompt_select_host():
     print("Choose host-port to bind to please: ")
     fh = open( "hosts.txt" );
 
@@ -99,7 +99,7 @@ def make_tempFile(ri):
 Make an incremented string of certain bytes(chars)
 
 parameters:
-    code: integer. the sequence number of the paket.
+    code: integer. The sequence number of the paket.
     size: integer. Size/length of paketrequested by client.
 
 return:
@@ -146,24 +146,6 @@ def readData_tempFile(tf):
 """
 ======== U D P =============
 """
-
-
-"""
-Print out the UDP server welcome screen.
-
-parameters:
-    port: The assigned port number.
-
-return:
-    void
-"""
-def print_startup_msg_UDP(port):
-    print (" ")
-    print("Started ardeidae_py UDP Server... waiting for clients.")
-    print ("Server running on host: ", socket.gethostname(), " on ", socket.gethostbyname(socket.gethostname()), " port: ", port)
-    print ("fully qualified domain name: ", socket.getfqdn())
-    print ("details: ", socket.gethostbyaddr(socket.gethostbyname(socket.gethostname())))
-
 
 
 """
@@ -219,25 +201,6 @@ def send_file_UDP(sReq, client_address, txUnitSize, tempFile):
 """
 
 
-
-"""
-Print out the TCP server welcome screen.
-
-parameters:
-    port: The assigned port number.
-
-return:
-    void
-"""
-def print_startup_msg_TCP(port):
-    print (" ")
-    print("Started TCP Server... waiting for clients.")
-    print ("Server host name: ", socket.gethostname(), " on ", socket.gethostbyname(socket.gethostname()), " port: ", port)
-    print ("fully qualified domain name: ", socket.getfqdn())
-    print ("details: ", socket.gethostbyaddr(socket.gethostbyname(socket.gethostname())))
-
-
-
 """
 Send a stream to connected client TCP.
 
@@ -275,8 +238,7 @@ def send_file_TCP(sReq, tempFile):
     fileData = tempFile.read()
     tempFile.close()
 
-    ## Return the return value from sendall to stop the timer.
-    return sReq.sendall(fileData)
+    sReq.sendall(fileData)
 
 
 
@@ -284,8 +246,6 @@ def send_file_TCP(sReq, tempFile):
 """
 ======== F E E D B A C K =============
 """
-
-
 
 """
 Make a file prepared confirmation.
@@ -354,6 +314,22 @@ def make_echoReport(data, client_address):
     print ("\n", timestamp, "{} wrote: ".format(client_address))
     print (data.decode('utf-8'))
     return data.upper()
+
+
+
+"""
+Print out server welcome screen.
+
+parameters:
+    port: The assigned port number.
+
+return:
+    void
+"""
+def print_startup_msg(port):
+    print ("Server host name: ", socket.gethostname(), " on ", socket.gethostbyname(socket.gethostname()), " port: ", port)
+    print ("fully qualified domain name: ", socket.getfqdn())
+    print ("details: ", socket.gethostbyaddr(socket.gethostbyname(socket.gethostname())))
 
 
 

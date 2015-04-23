@@ -62,8 +62,23 @@ Computer Networking: A Top Down Approach by Kurose, Ross.
 
 
 ## Good to know and notes
-#### https://docs.python.org/3/library/socket.html
-#### flags: http://www.unix.com/man-page/Linux/2/recv/
+
+#### Articles on RAW, TCP & UDP socket programming, very nicely done:
+http://www.binarytides.com/raw-socket-programming-in-python-linux/
+http://www.binarytides.com/python-socket-programming-tutorial/2/
+http://www.binarytides.com/programming-udp-sockets-in-python/
+
+http://pymotw.com/2/SocketServer/index.html
+
+
+#### Python & UNIX docs:
+https://docs.python.org/3/library/socket.html
+https://docs.python.org/3/library/socketserver.html
+
+If you want to find out more about the flags available in .recv():
+http://www.unix.com/man-page/Linux/2/recv/
+
+
 
 #### socket.send(bytes[, flags])
 

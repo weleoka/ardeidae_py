@@ -90,7 +90,7 @@ def start_here (theConnection):
 
 
 ### Select HOST and PORT.
-HOST, PORT = Utils.select_host()
+HOST, PORT = Utils.prompt_select_host()
 
 # Create a socket (SOCK_STREAM means a TCP socket), connect to server.
 clientSocket = socket.socket(AF_INET, SOCK_STREAM)
@@ -100,9 +100,9 @@ Utils.print_startup_msg(HOST, PORT)
 
 try:
     clientSocket.connect((HOST, PORT))
-    print ("...connected.")
 except socket.error as serr:
     print ('Failed to connect to server: ' + str(serr))
     sys.exit()
 
+print ("...connected.")
 start_here(clientSocket)
