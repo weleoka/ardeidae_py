@@ -83,3 +83,6 @@ A fundamental truth of sockets: messages must either be fixed length (yuck),
 or be delimited (shrug), or indicate how long they are (much better),
 or end by shutting down the connection.
 The choice is entirely yours, (but some ways are righter than others).
+
+
+Theoretically, the maximum size of an IP datagram is 65535 bytes, imposed by the 16-bit total length field in the IP header. With an IP header of 20 bytes and a UDP header of 8 bytes, this leaves a maximum of 65507 bytes of user data in a UDP datagram. Most implementations, however, provide less than this maximum.

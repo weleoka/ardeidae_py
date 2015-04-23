@@ -15,16 +15,6 @@ recvBuffSize = 1024
 
 
 """
-Startup function.
-"""
-def print_startup_msg():
-    print (" ")
-    print ("Started ardeidae_py TCP client.")
-    print ("Trying to connect to TCP server: ", HOST, " on port: ", PORT, "...wait.")
-
-
-
-"""
 Main function
 """
 def start_here (theConnection):
@@ -104,7 +94,9 @@ HOST, PORT = Utils.select_host()
 
 # Create a socket (SOCK_STREAM means a TCP socket), connect to server.
 clientSocket = socket.socket(AF_INET, SOCK_STREAM)
-print_startup_msg()
+
+print ("\nStarted ardeidae_py TCP client.")
+Utils.print_startup_msg(HOST, PORT)
 
 try:
     clientSocket.connect((HOST, PORT))

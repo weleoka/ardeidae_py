@@ -23,6 +23,30 @@ class Timer:
                        # Utils.send_stream_TCP(sReq, txInterval, txPackets, packetSize)
                     # print('Sending took %.03f sec.' % t.interval)
 
+"""
+Print startup message.
+
+parameters:
+    HOST: string. The server domainname to connect to.
+    PORT: int. The portnumber on server to connect to.
+
+return:
+    void.
+"""
+def print_startup_msg(HOST, PORT):
+    try:
+        remote_ip = socket.gethostbyname( HOST )
+    except socket.gaierror:
+        #could not resolve
+        remote_ip = False
+        print ('Hostname could not be resolved to an address.')
+
+    if remote_ip:
+        print ("Trying to connect to server: ", HOST, " (" + remote_ip + ") on port: ", PORT, "...wait.")
+    else:
+        print ("Trying to connect to server: ", HOST, " on port: ", PORT, "...wait.")
+
+
 
 """
 Select a host and port connect to.
@@ -35,7 +59,6 @@ parameters:
 return:
     host: string.
     port: integer.
-
 """
 def select_host():
     print("Choose server please:")

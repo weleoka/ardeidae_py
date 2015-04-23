@@ -12,19 +12,9 @@ PrintFile = False
 #How large each chunk of UDP data is that gets recv:d.
 recvBuffSize = 1024
 # How long to wait for the server to generate a file.
-RcvTimeOut_file = 20
+RcvTimeOut_file = 100
 # Default timeout for client if nothing recieved.
 RcvTimeOut_default = 2
-
-
-
-"""
-Startup function.
-"""
-def print_startup_msg():
-    print (" ")
-    print ("Started ardeidae_py UDP client.")
-    print ("The client will try to connect to UDP server: ", HOST, " on port: ", PORT, " if you send anything.")
 
 
 
@@ -114,6 +104,7 @@ HOST, PORT = Utils.select_host()
 
 # Create a socket (SOCK_DGRAM means a UDP socket).
 clientSocket = socket.socket(AF_INET, SOCK_DGRAM)
-print_startup_msg()
+print ("\nStarted ardeidae_py UDP client.")
+Utils.print_startup_msg(HOST, PORT)
 
 start_here(clientSocket)
