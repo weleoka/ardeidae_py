@@ -61,8 +61,8 @@ def start_here (theConnection):
                     with Utils.Timer() as t:
                         tempFile = Utils.recv_file_TCP(theConnection, recvBuffSize)
 
-                    Utils.print_file_stats(tempFile, typedInteger)
-                    Utils.print_transferRate(t.interval, typedInteger)
+                    rxFileLength = Utils.print_file_stats(tempFile, typedInteger)
+                    Utils.print_transferRate(t.interval, typedInteger, rxFileLength)
                     Utils.print_file_contents(tempFile, PrintFile)
 
                 else:

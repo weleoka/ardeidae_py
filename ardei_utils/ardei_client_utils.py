@@ -120,11 +120,15 @@ parameters:
 return:
     void.
 """
-def print_transferRate(interval, typedInteger):
+def print_transferRate(interval, typedInteger, rxFileLength):
     print ('Recieving file took %.03f sec.' % interval)
     bytesPerSec = False
     kBytesPerSec = False
     mBytesPerSec = False
+
+    if typedInteger != rxFileLength:
+        typedInteger = rxFileLength
+
     if interval > 0:
         bytesPerSec = typedInteger / interval
         # Format the transfer rate to be human readable.
@@ -152,7 +156,7 @@ parameters:
     ti: int, the typed typedInteger value from user.
 
 return:
-    void.
+    rfFileLength: int, the length of all the recieved data.
 """
 def print_file_stats (rf, ti):
     rf.seek(0)
@@ -163,10 +167,11 @@ def print_file_stats (rf, ti):
 
     if loss > 0:
         percentageLoss = 100 * (loss / ti)
-        print ("Loss detected: " + str(loss) + " chars missing from file. ( %.02f percent loss)" % percentageLoss)
+        print ("Loss detected: " + str(loss) + " chars missing from file. (%.02f percent loss)" % percentageLoss)
     elif loss == 0:
         print ("Recieved complete file (" + str(rfFileLength) + " chars). Saved as: \n (", rf.name, ")")
 
+    return rfFileLength
 
 
 """

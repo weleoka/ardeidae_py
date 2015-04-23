@@ -66,14 +66,14 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
                 if recievedInteger < FileLimit:
                     print("\nMaking tempFile of " + str(recievedInteger) + " characters...")
                     tempFile = Utils.make_tempFile(recievedInteger)
-                    print("File is prepared - confirmation sent to client. Now sending file.")
+                    print("File is prepared - confirmation sent to client. Now sending file in %.1f segments." % (recievedInteger / txUnitSize))
                     confirmation = Utils.make_confirmationReport(tempFile)
                     sReq.sendto(confirmation, client_address)
 
                     # TIMETAKE - sending file.
                     with Utils.Timer() as t:
                         Utils.send_file_UDP(sReq, client_address, txUnitSize, tempFile)
-                    print('Sending took %.03f sec.' % t.interval)
+                    print("Sending took %.03f sec." % t.interval)
 
                 # Make an error report and send to client.
                 elif recievedInteger > FileLimit:

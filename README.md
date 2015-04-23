@@ -14,7 +14,7 @@ Link layer frames also have headers: Ethernet (22 Bytes).
 1 character utf-8 is assumed in this package to be equal to 1 Byte.
 
 ## Usage
-Commands are "quit", "stream", integer or string on the prompt. Stream swithes to streaming mode. Integer request file, string requests an echo from server.
+Commands are "quit", "stream" / "s", integer or string on the prompt. Stream (or just s) swithes to streaming mode. Integer request file, string requests an echo from server.
 
 Be aware of the config variable PrintFile, if true will attempt to output the whole file to console of client
 
@@ -56,7 +56,8 @@ TCP client checks for an empty byte string from the socket. If this is detected 
 Please report an issue if one is found.
 
 * Test UDP sending functions with respect to time-taking. Select best way of measuring transfer rate.
-* params for string encode vs. decode for network transfer.
+* Learn params for string encode vs. decode for network transfer.
+* Make sequence numbered stream segment payload an option.
 
 
 
