@@ -81,7 +81,6 @@ def make_tempFile(ri):
     arr = []
     chunkStr = 'A'
 
-
     while True:
         if len(arr) >= ri:
             break
@@ -90,7 +89,7 @@ def make_tempFile(ri):
 
     string = ''.join(arr) # Turn the list of individual chars into string.
 
-    tf.write(str.encode(string, 'utf-8'))
+    tf.write(bytes(string, 'utf-8'))
     tf.flush() # Flush the write buffer to file.
 
     return tf

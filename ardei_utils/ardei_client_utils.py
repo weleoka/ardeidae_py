@@ -188,7 +188,8 @@ def print_stream_stats (segments, counter):
     loss = segments - counter
     if loss > 0:
         percentageLoss = 100 * (loss / segments)
-        print ("Recieved " + str(counter) + " segments. \n Segment loss %.02f percent." % percentageLoss)
+        print ("Recieved " + str(counter) + " of " + str(segments) + " segments. \n Loss: %.02f percent." % percentageLoss)
+        return
     print("Recieved all " + str(counter) + " segments.")
 
 
