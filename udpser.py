@@ -47,7 +47,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
                     segmentSize = False
                     pass
 
-                if txInterval:
+                if txInterval >= 0:
                     if txPackets > StreamServerPaketLimit:
                         txPackets = StreamServerPaketLimit
 
@@ -56,7 +56,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
                         Utils.send_stream_UDP(sReq, client_address, txInterval, txPackets, segmentSize, sequenceNumber)
                     print('Sending stream took %.03f sec.' % t.interval)
 
-                else:
+                elif not txInterval or not txPackets or not segmentSize:
                     faultReport = Utils.make_faultReportStream(streamRequest[1], streamRequest[2], streamRequest[3])
                     sReq.sendto(faultReport, client_address)
 

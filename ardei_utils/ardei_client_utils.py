@@ -107,6 +107,19 @@ def prompt_stream():
     interval = input('\nPlease input the segment TX interval (miliseconds) required: ')
     segments = input('\nPlease input the number of segments required: ')
     segmentSize = input('\nPlease input the size of each segment (Bytes): ')
+    try:
+        float(interval)
+    except:
+        interval = 10
+    try:
+        int(segments)
+    except:
+        segments = 1000
+    try:
+        int(segmentSize)
+    except:
+        segmentSize = 1024
+
     return float(interval), int(segments), int(segmentSize)
 
 

@@ -45,7 +45,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                     segmentSize = False
                     pass
 
-                if txInterval:
+                if txInterval >= 0:
                     if txPackets > StreamServerPaketLimit:
                         txPackets = StreamServerPaketLimit
 
@@ -54,7 +54,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                         Utils.send_stream_TCP(sReq, txInterval, txPackets, segmentSize, sequenceNumber)
                     print('Sending took %.03f sec.' % t.interval)
 
-                else:
+                elif not txInterval or not txPackets or not segmentSize:
                     faultReport = Utils.make_faultReportStream(streamRequest[1], streamRequest[2], streamRequest[3])
                     sReq.sendall(faultReport)
 

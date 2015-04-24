@@ -114,11 +114,14 @@ def make_segment_w_sequence(code, size):
     for char in code:
         arr.append(char)
 
+    i = len(arr)
+
     while True:
-        if len(arr) >= size:
+        if i == size:
             break
         else:
             arr.append(chunkStr)
+            i = i +1
 
     joinedArr = ''.join(arr) # Turn the list of individual chars into string.
 
@@ -194,7 +197,8 @@ def send_stream_UDP(sReq, client_address, txInterval, txPackets, segmentSize, se
     if not sequenceNumber:
         segment = make_segment_fixed(segmentSize) # No sequence number segment.
     while txPackets > 0:
-        time.sleep(txInterval)
+        if txInterval > 0:
+            time.sleep(txInterval)
         if sequenceNumber:
             segment = make_segment_w_sequence(txPackets, segmentSize) # Sequence numbered segments.
         sReq.sendto(segment, client_address)
