@@ -44,7 +44,9 @@ def start_here (theConnection):
             theConnection.sendall(streamRequest)
 
             streamData, counter = Utils.recv_stream_TCP(theConnection, recvBuffSize)
-            print("Recieved " + str(counter) + " segments.")
+
+            Utils.print_stream_stats(segments, counter)
+
 
 
 

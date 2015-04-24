@@ -88,7 +88,7 @@ def make_tempFile(ri):
 
     string = ''.join(arr) # Turn the list of individual chars into string.
 
-    tf.write(string.encode('utf-8'))
+    tf.write(str.encode(string, 'utf-8'))
     tf.flush() # Flush the write buffer to file.
 
     return tf
@@ -121,7 +121,7 @@ def make_segment_w_sequence(code, size):
 
     string = ''.join(arr) # Turn the list of individual chars into string.
 
-    return string.encode('utf-8')
+    return str.encode(string, 'utf-8')
 
 
 
@@ -149,7 +149,7 @@ def make_segment_fixed(size):
 
     string = ''.join(arr) # Turn the list of individual chars into string.
 
-    return string.encode('utf-8')
+    return str.encode(string, 'utf-8')
 
 
 
@@ -185,16 +185,18 @@ parameters:
     txInterval: integer, the second delay between sending.
     txPackets: integer, the number of segments to send.
     data: bytes object, the data to include in each segment.
+    sequenceNumber: boolean, include sequence number option.
 
 return:
     void
 """
-def send_stream_UDP(sReq, client_address, txInterval, txPackets, segmentSize):
-    segment = make_segment_fixed(segmentSize) # No sequence number segment.
-
+def send_stream_UDP(sReq, client_address, txInterval, txPackets, segmentSize, sequenceNumber):
+    if not sequenceNumber:
+        segment = make_segment_fixed(segmentSize) # No sequence number segment.
     while txPackets > 0:
         time.sleep(txInterval)
-        # segment = make_segment_w_sequence(txPackets, segmentSize) # Sequence numbered segments.
+        if sequenceNumber:
+            segment = make_segment_w_sequence(txPackets, segmentSize) # Sequence numbered segments.
         sReq.sendto(segment, client_address)
         txPackets = txPackets - 1
     return
@@ -241,15 +243,18 @@ parameters:
     txInterval: integer, the second delay between sending.
     txPackets: integer, the number of segments to send.
     data: bytes object, the data to include in each segment.
+    sequenceNumber: boolean, include sequence number option.
 
 return:
     void
 """
-def send_stream_TCP(sReq, txInterval, txPackets, segmentSize):
-    segment = make_segment_fixed(segmentSize) # No sequence number segment.
+def send_stream_TCP(sReq, txInterval, txPackets, segmentSize, sequenceNumber):
+    if not sequenceNumber:
+        segment = make_segment_fixed(segmentSize) # No sequence number segment.
     while txPackets > 0:
         time.sleep(txInterval)
-        # segment = make_segment_w_sequence(txPackets, segmentSize) # Sequence numbered segments.
+        if sequenceNumber:
+            segment = make_segment_w_sequence(txPackets, segmentSize) # Sequence numbered segments.
         sReq.send(segment)
         txPackets = txPackets - 1
     return
@@ -345,7 +350,7 @@ return:
 def make_echoReport(data, client_address):
     timestamp = datetime.datetime.now().strftime("%I:%M%p")
     print ("\n", timestamp, "{} wrote: ".format(client_address))
-    print (data.decode('utf-8'))
+    print (bytes.decode(data, 'utf-8'))
     return data.upper()
 
 

@@ -107,7 +107,7 @@ def prompt_stream():
     interval = input('\nPlease input the segment TX interval (miliseconds) required: ')
     segments = input('\nPlease input the number of segments required: ')
     segmentSize = input('\nPlease input the size of each segment (Bytes): ')
-    return int(interval), int(segments), int(segmentSize)
+    return float(interval), int(segments), int(segmentSize)
 
 
 
@@ -174,6 +174,25 @@ def print_file_stats (rf, ti):
     return rfFileLength
 
 
+
+"""
+Output to console stream stats.
+parameters:
+    segments: int, requested segment count.
+    counter: int, recieved segment count.
+
+return:
+   void.
+"""
+def print_stream_stats (segments, counter):
+    loss = segments - counter
+    if loss > 0:
+        percentageLoss = 100 * (loss / segments)
+        print ("Recieved " + str(counter) + " segments. \n Segment loss %.02f percent." % percentageLoss)
+    print("Recieved all " + str(counter) + " segments.")
+
+
+
 """
 Output to console file contents.
 Depends on settings specified. Will either print contents, or only length of conents.
@@ -192,7 +211,7 @@ def print_file_contents (rf, PrintFile):
         data = rf.read(buf)
 
         while data:
-            tmpstr = data.decode('utf-8')
+            tmpstr = bytes.decode('utf-8')
             print (tmpstr)
             data = rf.read(buf)
 
@@ -210,7 +229,7 @@ return:
 """
 def print_dataRecieved(rd):
     print ("Received {0} bytes of data.".format(sys.getsizeof(rd)))
-    print (str(rd.decode('utf-8')))
+    print (bytes.decode(rd, 'utf-8'))
 
 
 
@@ -267,7 +286,7 @@ def recv_stream_UDP(cnct, recvBuffSize, segments):
             print("Socket timed out on recv_stream.")
             return counter
 
-        chunkStr = chunk.decode('utf-8')
+        chunkStr = bytes.decode(chunk, 'utf-8')
         sequence = chunkStr.split("A", 1)
 
         try:
@@ -389,7 +408,7 @@ def monitor_server_response (cnct):
     while True:
         try:
             chunkStr = cnct.recv(1024)
-            response = chunkStr.decode('utf-8')
+            response = bytes.decode(chunkStr, 'utf-8')
             if re.search('file_prepared', response):
                 print ("Server has prepared the file, recieving...")
                 return True

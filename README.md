@@ -11,7 +11,9 @@ TCP(20 Bytes + options(rare)) and UDP(8 Bytes) for each segment.
 IPv4(20Bytes + options) and IPv6(40 Bytes) for each datagram.
 Link layer frames also have headers: Ethernet (22 Bytes).
 
-1 character utf-8 is assumed in this package to be equal to 1 Byte.
+1 character utf-8 is assumed in this project to be equal to 1 Byte.
+
+Note: When a transfer rate is claimed it is probably wildly inaccurate - check with wireshark.
 
 ## Usage
 Commands are "quit", "stream" / "s", integer or string on the prompt. Stream (or just s) swithes to streaming mode. Integer request file, string requests an echo from server.

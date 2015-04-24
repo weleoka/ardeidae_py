@@ -11,12 +11,13 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
         # SETTINGS
         FileLimit = 123456790 #allows 123456789 to be sent.
         StreamServerPaketLimit = 10001 #Restriction on number of segments to be streamed.
-        txUnitSize = 1024 #How large each chunk of UDP data is that gets sent.
+        txUnitSize = 65507 #How large each chunk of UDP data is that gets sent.
+        sequenceNumber = False # Label each segment in streaming mode with a sequence number.
 
         # self.request[1] is the UDP socket connected to the client
         sReq = self.request[1]
         data = self.request[0].strip()
-        dataStr = data.decode('utf-8')
+        dataStr = bytes.decode(data, 'utf-8')
         client_address = self.client_address
 
         filetosend = False
@@ -34,7 +35,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
             if re.search('stream', dataStr):
                 streamRequest = (dataStr.split("-", 3))
                 try:
-                    txInterval = int(streamRequest[1])/1000 # Convert milliseconds to seconds
+                    txInterval = float(streamRequest[1])/1000 # Convert milliseconds to seconds
                     txPackets = int(streamRequest[2])
                     segmentSize = int(streamRequest[3])
                     print("TXinterval: " + str(txInterval) + " TXsegments: " + str(txPackets) + " Size: " + str(segmentSize))
@@ -51,7 +52,7 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 
                     # TIMETAKE - sending stream.
                     with Utils.Timer() as t:
-                        Utils.send_stream_UDP(sReq, client_address, txInterval, txPackets, segmentSize)
+                        Utils.send_stream_UDP(sReq, client_address, txInterval, txPackets, segmentSize, sequenceNumber)
                     print('Sending stream took %.03f sec.' % t.interval)
 
                 else:

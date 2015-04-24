@@ -50,7 +50,8 @@ def start_here (theConnection):
             theConnection.sendto(streamRequest, (HOST, PORT))
 
             counter = Utils.recv_stream_UDP(theConnection, recvBuffSize, segments)
-            print("Recieved " + str(counter) + " segments.")
+
+            Utils.print_stream_stats(segments, counter)
 
 
 

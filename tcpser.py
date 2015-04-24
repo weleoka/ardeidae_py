@@ -11,11 +11,12 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         # SETTINGS
         FileLimit = 123456790 #allows 123456789 to be sent.
         StreamServerPaketLimit = 10001 #Restriction on number of segments to be streamed.
+        sequenceNumber = False # Label each segment in streaming mode with a sequence number.
 
         # self.request is the TCP socket connected to the client
         sReq = self.request
         data = sReq.recv(1024).strip()
-        dataStr = data.decode('utf-8')
+        dataStr = bytes.decode(data, 'utf-8')
         client_address = self.client_address[0]
 
         filetosend = False
@@ -33,7 +34,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
             if re.search('stream', dataStr):
                 streamRequest = (dataStr.split("-", 3))
                 try:
-                    txInterval = int(streamRequest[1])/1000
+                    txInterval = float(streamRequest[1])/1000
                     txPackets = int(streamRequest[2])
                     segmentSize = int(streamRequest[3])
                     print("TXinterval: " + str(txInterval) + " TXsegments: " + str(txPackets) + " Size: " + str(segmentSize))
@@ -50,7 +51,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
                     # TIMETAKE - sending file.
                     with Utils.Timer() as t:
-                        Utils.send_stream_TCP(sReq, txInterval, txPackets, segmentSize)
+                        Utils.send_stream_TCP(sReq, txInterval, txPackets, segmentSize, sequenceNumber)
                     print('Sending took %.03f sec.' % t.interval)
 
                 else:
