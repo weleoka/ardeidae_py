@@ -9,8 +9,8 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
     def handle(self):
         # SETTINGS
-        FileLimit = 123456790 #allows 123456789 to be sent.
-        StreamServerPaketLimit = 10001 #Restriction on number of segments to be streamed.
+        FileLimit = 123456790 # Allows 123456789 to be sent.
+        StreamServerPaketLimit = 10001 # Restriction on number of segments to be streamed.
         sequenceNumber = False # Label each segment in streaming mode with a sequence number.
 
         # self.request is the TCP socket connected to the client
@@ -64,7 +64,6 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
             elif recievedInteger:
                 # Make the temporary file and generate confiramtion message.
                 if recievedInteger < FileLimit:
-                    print("\nMaking tempFile of " + str(recievedInteger) + " characters...")
                     tempFile = Utils.make_tempFile(recievedInteger)
                     print("File is prepared - confirmation sent to client. Now sending file.")
                     confirmation = Utils.make_confirmationReport(tempFile)

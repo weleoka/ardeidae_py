@@ -7,14 +7,11 @@ from ardei_utils import ardei_client_utils
 
 Utils = ardei_client_utils
 
-# Specify if recieved files are to be output to terminal or not.
-PrintFile = False
-#How large each chunk of UDP data is that gets recv:d.
-recvBuffSize = 1024
-# How long to wait for the server to generate a file.
-RcvTimeOut_file = 100
-# Default timeout for client if nothing recieved.
-RcvTimeOut_default = 2
+# SETTINGS
+PrintFile = False # Specify if recieved files are to be output to terminal or not.
+recvBuffSize = 1024 # How large each chunk of UDP data is that gets recv:d.
+RcvTimeOut_file = 100 # How long to wait for the server to generate a file.
+RcvTimeOut_default = 2 # Default timeout for client if nothing recieved.
 
 
 

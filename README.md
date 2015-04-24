@@ -15,6 +15,7 @@ Link layer frames also have headers: Ethernet (22 Bytes).
 
 Note: When a transfer rate is claimed it is probably wildly inaccurate - check with wireshark.
 
+
 ## Usage
 Commands are "quit", "stream" / "s", integer or string on the prompt. Stream (or just s) swithes to streaming mode. Integer request file, string requests an echo from server.
 
@@ -46,40 +47,37 @@ UDP client will wait for UDP segments to arrive until socket.settimeout() expire
 TCP client checks for an empty byte string from the socket. If this is detected it assumes the end of transmission.
 
 
-
 ## Code and Style
 * The server imports dependencies from ardei_server_utils.py and the clients from ardei_client_utils.py.
 * The servers by default do not accept requests for greater than 123456789 character transfers.
 
 
-
 ## Bugs and Issues
-
 Please report an issue if one is found.
 
 
-
-## Sources and inspiration
-http://docs.python.org/3.1/howto/sockets.html
-
-The yifi people
-
-Computer Networking: A Top Down Approach by Kurose, Ross.
+## Licence
+LICENCE.md for details.
+Copyright (c) 2015 A.K. Weeks
 
 
+## Sources, inspiration and notes
+Credits go to docs.python.org, stack-overflow.com,
+Computer Networking: A Top Down Approach by Ross Kurose.
 
-## Good to know and notes
 
-#### Articles on RAW, TCP & UDP socket programming, very nicely done:
+#### Articles on RAW, TCP & UDP socket programming
 http://www.binarytides.com/raw-socket-programming-in-python-linux/
 http://www.binarytides.com/python-socket-programming-tutorial/2/
 http://www.binarytides.com/programming-udp-sockets-in-python/
 
 http://pymotw.com/2/SocketServer/index.html
 
+http://docs.python.org/3.1/howto/sockets.html
 
-#### Python & UNIX docs:
+#### Python & UNIX docs
 https://docs.python.org/3/library/socket.html
+
 https://docs.python.org/3/library/socketserver.html
 
 If you want to find out more about the flags available in .recv():

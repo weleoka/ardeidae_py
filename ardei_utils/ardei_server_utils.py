@@ -75,6 +75,8 @@ return:
     tf: temporaryfile instance.
 """
 def make_tempFile(ri):
+    print("\nMaking tempFile of " + str(ri) + " characters...")
+
     tf = tempfile.NamedTemporaryFile()
     arr = []
     chunkStr = 'A'

@@ -9,9 +9,9 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
 
     def handle(self):
         # SETTINGS
-        FileLimit = 123456790 #allows 123456789 to be sent.
-        StreamServerPaketLimit = 10001 #Restriction on number of segments to be streamed.
-        txUnitSize = 65507 #How large each chunk of UDP data is that gets sent.
+        FileLimit = 123456790 # Allows 123456789 to be sent.
+        StreamServerPaketLimit = 10001 # Restriction on number of segments to be streamed.
+        txUnitSize = 1024 # How large each chunk of UDP data is that gets sent.
         sequenceNumber = False # Label each segment in streaming mode with a sequence number.
 
         # self.request[1] is the UDP socket connected to the client
@@ -65,7 +65,6 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
             elif recievedInteger:
                 # Make the temporary file and generate confiramtion message.
                 if recievedInteger < FileLimit:
-                    print("\nMaking tempFile of " + str(recievedInteger) + " characters...")
                     tempFile = Utils.make_tempFile(recievedInteger)
                     print("File is prepared - confirmation sent to client. Now sending file in %.1f segments." % (recievedInteger / txUnitSize))
                     confirmation = Utils.make_confirmationReport(tempFile)

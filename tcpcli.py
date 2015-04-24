@@ -7,10 +7,9 @@ from ardei_utils import ardei_client_utils
 
 Utils = ardei_client_utils
 
-# Specify if recieved files are to be output to terminal or not.
-PrintFile = False
-#How large each chunk of TCP data is that gets recv:d.
-recvBuffSize = 1024
+# SETTINGS
+PrintFile = False # Specify if recieved files are to be output to terminal or not.
+recvBuffSize = 1024 # How large each chunk of TCP data is that gets recv:d.
 
 
 
