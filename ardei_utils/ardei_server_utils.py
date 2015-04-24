@@ -87,9 +87,9 @@ def make_tempFile(ri):
         else:
             arr.append(chunkStr)
 
-    string = ''.join(arr) # Turn the list of individual chars into string.
+    joinedArr = ''.join(arr) # Turn the list of individual chars into string.
 
-    tf.write(bytes(string, 'utf-8'))
+    tf.write(bytes(joinedArr, 'utf-8'))
     tf.flush() # Flush the write buffer to file.
 
     return tf
@@ -120,9 +120,9 @@ def make_segment_w_sequence(code, size):
         else:
             arr.append(chunkStr)
 
-    string = ''.join(arr) # Turn the list of individual chars into string.
+    joinedArr = ''.join(arr) # Turn the list of individual chars into string.
 
-    return str.encode(string, 'utf-8')
+    return str.encode(joinedArr, 'utf-8')
 
 
 
@@ -138,19 +138,18 @@ return:
 def make_segment_fixed(size):
     arr = []
     chunkStr = 'A'
-    code = list('FIXED') # Append FIXED notaion to payload lead.
+    i = 0
 
-    for char in code:
-        arr.append(char)
     while True:
-        if len(arr) >= size:
+        if i == size:
             break
         else:
             arr.append(chunkStr)
+            i = i + 1
 
-    string = ''.join(arr) # Turn the list of individual chars into string.
+    joinedArr = ''.join(arr) # Turn the list of individual chars into string.
 
-    return str.encode(string, 'utf-8')
+    return str.encode(joinedArr, 'utf-8')
 
 
 

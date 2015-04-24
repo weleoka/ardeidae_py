@@ -11,9 +11,10 @@ class MyUDPHandler(socketserver.BaseRequestHandler):
         # SETTINGS
         FileLimit = 123456790 # Allows 123456789 to be sent.
         StreamServerPaketLimit = 10001 # Restriction on number of segments to be streamed.
-        txUnitSize = 1024 # How large each chunk of UDP data is that gets sent.
+        txUnitSize = 1120 # How large each chunk of UDP data is that gets sent.
         sequenceNumber = False # Label each segment in streaming mode with a sequence number.
 
+        # 8192 4096 2048 1024 512 256
         # self.request[1] is the UDP socket connected to the client
         sReq = self.request[1]
         data = self.request[0].strip()
