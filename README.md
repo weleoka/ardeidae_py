@@ -57,10 +57,6 @@ TCP client checks for an empty byte string from the socket. If this is detected 
 
 Please report an issue if one is found.
 
-* Test UDP sending functions with respect to time-taking. Select best way of measuring transfer rate.
-* Learn params for string encode vs. decode for network transfer.
-* Make sequence numbered stream segment payload an option.
-
 
 
 ## Sources and inspiration
