@@ -58,6 +58,7 @@ Please report an issue if one is found.
 
 ## Licence
 LICENCE.md for details.
+
 Copyright (c) 2015 A.K. Weeks
 
 

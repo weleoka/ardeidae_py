@@ -288,7 +288,7 @@ parameters:
 return:
     counter: integer. Number of iterations of the loop.
 """
-def recv_stream_UDP(cnct, recvBuffSize, segments):
+def recv_stream_UDP(cnct, recvBuffSize, segments, sequenceNumber):
     msg = b''
     counter = 0
     oldSequence = segments
@@ -300,21 +300,22 @@ def recv_stream_UDP(cnct, recvBuffSize, segments):
             print("Socket timed out on recv_stream.")
             return counter
 
-        chunkStr = bytes.decode(chunk, 'utf-8')
-        sequence = chunkStr.split("A", 1)
+        if sequenceNumber:
+            chunkStr = bytes.decode(chunk, 'utf-8')
+            sequence = chunkStr.split("A", 1)
 
-        try:
-            sequence = int(sequence[0])
-        except:
-            sequence = False
-            pass
+            try:
+                sequence = int(sequence[0])
+            except:
+                sequence = False
+                pass
 
-        if sequence:
-            if sequence == oldSequence:
-                oldSequence = oldSequence - 1
-            else:
-                print("Detected missing segment: " + str(oldSequence - 1))
-                oldSequence = sequence
+            if sequence:
+                if sequence == oldSequence:
+                    oldSequence = oldSequence - 1
+                else:
+                    print("Detected missing segment: " + str(oldSequence - 1))
+                    oldSequence = sequence
 
         counter = counter + 1
 

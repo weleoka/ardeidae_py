@@ -203,7 +203,6 @@ def send_stream_UDP(sReq, client_address, txInterval, txPackets, segmentSize, se
             segment = make_segment_w_sequence(txPackets, segmentSize) # Sequence numbered segments.
         sReq.sendto(segment, client_address)
         txPackets = txPackets - 1
-    return
 
 
 
@@ -228,7 +227,6 @@ def send_file_UDP(sReq, client_address, txUnitSize, tempFile):
         fileData = tempFile.read(txUnitSize)
 
     tempFile.close()
-    return
 
 
 

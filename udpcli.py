@@ -12,6 +12,7 @@ PrintFile = False # Specify if recieved files are to be output to terminal or no
 recvBuffSize = 1024 # How large each chunk of UDP data is that gets recv:d.
 RcvTimeOut_file = 100 # How long to wait for the server to generate a file.
 RcvTimeOut_default = 2 # Default timeout for client if nothing recieved.
+sequenceNumber = False # Check sequence number of each segment recieved in streaming mode.
 
 
 
@@ -46,7 +47,7 @@ def start_here (theConnection):
             streamRequest = str.encode('stream-' + str(interval) + '-' + str(segments) + '-' + str(segmentSize))
             theConnection.sendto(streamRequest, (HOST, PORT))
 
-            counter = Utils.recv_stream_UDP(theConnection, recvBuffSize, segments)
+            counter = Utils.recv_stream_UDP(theConnection, recvBuffSize, segments, sequenceNumber)
 
             Utils.print_stream_stats(segments, counter)
 
