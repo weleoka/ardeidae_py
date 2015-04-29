@@ -185,6 +185,7 @@ Segment can be generated once or for every iteration. Comment out accordingly.
 
 parameters:
     sReq: the client request instance.
+    client_address: the remote address of the client making the request.
     txInterval: integer, the second delay between sending.
     txPackets: integer, the number of segments to send.
     data: bytes object, the data to include in each segment.
@@ -259,7 +260,6 @@ def send_stream_TCP(sReq, txInterval, txPackets, segmentSize, sequenceNumber):
             segment = make_segment_w_sequence(txPackets, segmentSize) # Sequence numbered segments.
         sReq.send(segment)
         txPackets = txPackets - 1
-    return
 
 
 

@@ -15,7 +15,6 @@ Link layer frames also have headers: Ethernet (22 Bytes).
 
 Note: When a transfer rate is claimed it is probably wildly inaccurate - check with wireshark.
 
-
 ## Usage
 Commands are "quit", "stream" / "s", integer or string on the prompt. Stream (or just s) swithes to streaming mode. Integer request file, string requests an echo from server.
 
@@ -37,7 +36,9 @@ If the file requested is particularly large the server will take quite a long ti
 
 Once a segment is recieved that notifies the client that the file is ready the client switches to recieve mode.
 
-The TCP stack accepts all the file data from the application almost instantaniously so that a timer on TCP transmissions is not plausable at application level. Recieveing time is easy enough to measure, and from that a transfer rate can be calculated.
+The TCP stack accepts all the file data from the application almost instantaniously so that a timer on TCP transmissions is not plausable at application level. Recieveing time is more plausable to measure, and from that a transfer rate can be calculated.
+
+* The servers by default do not accept requests for greater than 123456789 character transfers.
 
 #### Transmission ending
 The most significant differance between UDP clients and TCP clients is in their method of detecting the end of a transmission.
@@ -46,26 +47,23 @@ UDP client will wait for UDP segments to arrive until socket.settimeout() expire
 
 TCP client checks for an empty byte string from the socket. If this is detected it assumes the end of transmission.
 
-
-## Code and Style
+## Code, Style and wish-list
 * The server imports dependencies from ardei_server_utils.py and the clients from ardei_client_utils.py.
-* The servers by default do not accept requests for greater than 123456789 character transfers.
+
+* Functionality to repeatedly send groups of segments with each group of segments having a decreasing/increasing size/transmission-rate.
 
 
 ## Bugs and Issues
 Please report an issue if one is found.
-
 
 ## Licence
 LICENCE.md for details.
 
 Copyright (c) 2015 A.K. Weeks
 
-
 ## Sources, inspiration and notes
 Credits go to docs.python.org, stack-overflow.com,
 Computer Networking: A Top Down Approach by Ross Kurose.
-
 
 #### Articles on RAW, TCP & UDP socket programming
 http://www.binarytides.com/raw-socket-programming-in-python-linux/
